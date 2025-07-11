@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  medical_parser:
+    build: .
+    container_name: medical_pdf_parser
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
