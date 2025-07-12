@@ -1,6 +1,6 @@
 import re
 from rapidfuzz import fuzz, process
-from Medical.parser.sentence_transformer_matcher import match_with_embeddings
+from .sentence_transformer_matcher import match_with_embeddings
 
 # Ключевые поля из шаблона Excel
 TARGET_FIELDS = [
