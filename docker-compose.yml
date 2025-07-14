@@ -1,18 +1,22 @@
 version: '3.9'
 
 services:
-#  medical_parser:
-#    build: .
-#    container_name: medical_pdf_parser
-#    volumes:
-#      - ./data:/app/data
-#      - ./output:/app/output
-#    environment:
-#      - PYTHONUNBUFFERED=1
-#    restart: unless-stopped
+  medical_parser:
+    build:
+      context: ./Medical
+      dockerfile: Dockerfile
+    container_name: medical_pdf_parser
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
 
   llama3:
-    build: .
+    build:
+      context: ./LLM_Server
+      dockerfile: Dockerfile
     container_name: llama3-api
     ports:
       - "8000:8000"
