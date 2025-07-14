@@ -10,3 +10,19 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+
+  llama3:
+    build: .
+    container_name: llama3-api
+    ports:
+      - "8000:8000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    environment:
+      - MODEL=Meta-Llama-3-8B-Instruct.fp16.gguf
+    volumes:
+      - ./Model:/Model
+    restart: unless-stopped
