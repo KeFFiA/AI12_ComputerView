@@ -12,7 +12,7 @@ RUN git clone https://github.com/ggerganov/llama.cpp /llama.cpp && \
     ln -s /llama.cpp/build/bin/server /usr/local/bin/llama-server
 
 # Копируем модель
-COPY ./models /models
+COPY ./LLM_Server/Model /Model
 
 # Запускаем сервер
 CMD ["llama-server", \
