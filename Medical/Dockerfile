@@ -15,7 +15,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Установим Python зависимости
-COPY ./requirements.txt /app/requirements.txt
+COPY /requirements.txt /app/requirements.txt
 WORKDIR /app
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
