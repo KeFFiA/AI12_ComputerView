@@ -4,7 +4,7 @@ services:
   medical_parser:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Medical/Dockerfile
     container_name: medical_pdf_parser
     volumes:
       - ./data:/app/data
@@ -16,7 +16,7 @@ services:
   llama3:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: LLM_Server/Dockerfile
     container_name: llama3-api
     ports:
       - "8000:8000"
