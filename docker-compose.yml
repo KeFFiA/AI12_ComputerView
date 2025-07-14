@@ -3,7 +3,7 @@ version: '3.9'
 services:
   medical_parser:
     build:
-      context: ./Medical
+      context: .
       dockerfile: Dockerfile
     container_name: medical_pdf_parser
     volumes:
@@ -15,7 +15,7 @@ services:
 
   llama3:
     build:
-      context: ./LLM_Server
+      context: .
       dockerfile: Dockerfile
     container_name: llama3-api
     ports:
