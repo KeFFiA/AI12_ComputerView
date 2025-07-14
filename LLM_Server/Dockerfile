@@ -3,7 +3,9 @@ FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
 # Установка зависимостей
 RUN apt-get update && apt-get install -y \
     git cmake build-essential \
-    curl python3 python3-pip
+    curl libcurl4-openssl-dev \
+    python3 python3-pip \
+    apt-utils
 
 # Клонирование и сборка llama.cpp с поддержкой CUDA
 RUN git clone https://github.com/ggerganov/llama.cpp /llama.cpp && \
