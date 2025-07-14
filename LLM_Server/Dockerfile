@@ -16,7 +16,7 @@ COPY ./models /models
 
 # Запускаем сервер
 CMD ["llama-server", \
-     "-m", "/models/meta-llama-3-8B-Instruct-fp16.gguf", \
+     "-m", "/Model/Meta-Llama-3-8B-Instruct.fp16.gguf", \
      "--host", "0.0.0.0", \
      "--port", "8000", \
      "--api", \
