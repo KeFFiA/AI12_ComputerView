@@ -15,8 +15,8 @@ services:
 
   llama3:
     build:
-      context: .
-      dockerfile: LLM_Server/Dockerfile
+      context: ./LLM_Server
+      dockerfile: Dockerfile
     container_name: llama3-api
     ports:
       - "8000:8000"
