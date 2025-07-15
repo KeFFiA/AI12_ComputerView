@@ -14,7 +14,9 @@ services:
     restart: unless-stopped
 
   llama3:
-    build: .
+    build:
+      context: ./Medical
+      dockerfile: Dockerfile
     image: llama3-api
     container_name: llama3-api
     ports:
