@@ -14,17 +14,14 @@ services:
     restart: unless-stopped
 
   llama3:
-    build:
-      context: ./LLM_Server
-      dockerfile: Dockerfile
+    build: .
+    image: llama3-api
     container_name: llama3-api
-    runtime: nvidia  # 👈 теперь допустимо
     ports:
       - "8000:8000"
-    environment:
-      - MODEL=Meta-Llama-3-8B-Instruct.fp16.gguf
-      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
-      - ./Model:/Model
-    restart: unless-stopped
-    command: ["sleep", "infinity"]
+      - ./models:/models
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    runtime: nvidia

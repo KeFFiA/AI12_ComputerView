@@ -1,35 +1,34 @@
 FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
 
-# Установка зависимостей
+# --- Установка зависимостей ---
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
-    git cmake build-essential curl libcurl4-openssl-dev \
-    python3 python3-pip wget pkg-config libprotobuf-dev protobuf-compiler \
-    libopenblas-dev libomp-dev && \
-    rm -rf /var/lib/apt/lists/*
+    git cmake build-essential curl ca-certificates \
+    libopenblas-dev libboost-all-dev \
+    python3 python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
-# CUDA окружение
-ENV PATH=/usr/local/cuda/bin:${PATH}
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:${LD_LIBRARY_PATH}
-
-# Клонируем llama.cpp
-RUN git clone https://github.com/ggerganov/llama.cpp.git /llama.cpp
-
-# Сборка llama_api_server
+# --- Клонируем llama.cpp ---
 WORKDIR /llama.cpp
-RUN cmake -S . -B build \
-    -DLLAMA_CUBLAS=on \
-    -DLLAMA_BUILD_SERVER=on && \
-    cmake --build build --target llama_api_server -j
+RUN git clone https://github.com/ggerganov/llama.cpp.git . \
+ && mkdir -p build
 
-# Копируем модель
-COPY ./Model /Model
+# --- Сборка с поддержкой CUDA и сервера ---
+WORKDIR /llama.cpp/build
+RUN cmake .. \
+    -DLLAMA_BUILD_SERVER=ON \
+    -DGGML_CUDA=ON \
+ && make -j $(nproc)
 
-# Открываем порт
+# --- Копируем модель ---
+COPY ./Model /models
+
+ENV MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
+
+# --- Запуск llama-server ---
 EXPOSE 8000
-
-# Запуск REST-сервера
-CMD ["/llama.cpp/build/bin/llama_api_server", \
-     "-m", "/Model/Meta-Llama-3-8B-Instruct.fp16.gguf", \
+CMD ["/llama.cpp/build/bin/llama-server", \
+     "-m", "/models/Meta-Llama-3-8B-Instruct.fp16.gguf", \
      "--host", "0.0.0.0", \
      "--port", "8000", \
      "--api-key", "llama"]
