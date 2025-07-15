@@ -35,6 +35,6 @@ ENV MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
 
 # Открываем порт API и запускаем сервер совместимый с OpenAI
 EXPOSE 8000
-CMD ["python3", "-m", "llama_cpp.server.openai", \
+CMD ["/llama.cpp/build/bin/llama-server", \
      "--model", "/models/Meta-Llama-3-8B-Instruct.fp16.gguf", \
      "--host", "0.0.0.0", "--port", "8000"]
