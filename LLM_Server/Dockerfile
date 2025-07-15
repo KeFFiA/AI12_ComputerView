@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     curl libcurl4-openssl-dev \
     python3 python3-pip \
     wget pkg-config libprotobuf-dev protobuf-compiler \
-    libopenblas-dev libomp-dev \ apt-utils
+    libopenblas-dev libomp-dev
 
 # Установка символических ссылок для libcuda
 RUN ln -s /usr/local/cuda/lib64/stubs/libcuda.so /usr/lib/libcuda.so && \
