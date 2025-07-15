@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
     wget pkg-config libprotobuf-dev protobuf-compiler \
     libopenblas-dev libomp-dev
 
-# Указываем переменные окружения для CUDA
+# Установка переменных окружения
 ENV CUDAToolkit_ROOT=/usr/local/cuda
 ENV PATH=$CUDAToolkit_ROOT/bin:$PATH
 ENV LD_LIBRARY_PATH=$CUDAToolkit_ROOT/lib64:$LD_LIBRARY_PATH
@@ -16,14 +16,14 @@ ENV LD_LIBRARY_PATH=$CUDAToolkit_ROOT/lib64:$LD_LIBRARY_PATH
 # Клонирование и сборка llama.cpp
 RUN git clone https://github.com/ggerganov/llama.cpp /llama.cpp && \
     cd /llama.cpp && \
-    cmake -B build -DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES="all" . && \
+    cmake -B build -DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=86 . && \
     cmake --build build -j && \
     ln -s /llama.cpp/build/bin/server /usr/local/bin/llama-server
 
-# Копируем модель внутрь контейнера
+# Копирование модели
 COPY ./Model /Model
 
-# Запуск OpenAI-совместимого сервера
+# Запуск OpenAI-совместимого API
 CMD ["llama-server", \
      "-m", "/Model/Meta-Llama-3-8B-Instruct.fp16.gguf", \
      "--host", "0.0.0.0", \
