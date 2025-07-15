@@ -1,8 +1,11 @@
 FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV CUDA_LIB_DIR=/usr/local/cuda/lib64/stubs
+ENV LD_LIBRARY_PATH=${CUDA_LIB_DIR}:${LD_LIBRARY_PATH}
+ENV LIBRARY_PATH=${CUDA_LIB_DIR}:${LIBRARY_PATH}
 
-# --- Установка зависимостей ---
+# Установка зависимостей
 RUN apt-get update && apt-get install -y \
     git cmake build-essential curl ca-certificates \
     libopenblas-dev libboost-all-dev \
@@ -10,27 +13,27 @@ RUN apt-get update && apt-get install -y \
     python3 python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# --- Клонируем llama.cpp ---
+# Прокладываем символическую ссылку на libcuda
+RUN ln -s ${CUDA_LIB_DIR}/libcuda.so /usr/lib/libcuda.so || true && \
+    ln -s ${CUDA_LIB_DIR}/libcuda.so /usr/lib/libcuda.so.1 || true
+
+# Клонируем llama.cpp и собираем с поддержкой CUDA
 WORKDIR /llama.cpp
-RUN git clone https://github.com/ggerganov/llama.cpp.git . \
- && mkdir -p build
+RUN git clone https://github.com/ggerganov/llama.cpp.git . && mkdir build
 
-# --- Сборка с CUDA ---
 WORKDIR /llama.cpp/build
-RUN cmake .. -DGGML_CUDA=ON && make -j $(nproc)
+RUN cmake .. -DGGML_CUDA=ON -DLLAMA_CURL=OFF && make -j $(nproc)
 
-# --- Установка Python библиотеки ---
+# Установка Python-зависимостей
 WORKDIR /app
 RUN pip install --upgrade pip
 RUN pip install llama-cpp-python[server] --no-cache-dir
 
-# --- Копируем модель внутрь контейнера ---
+# Пробрасываем модель
 COPY ./Model /models
-
-# --- Указываем путь к модели ---
 ENV MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
 
-# --- Запускаем OpenAI-совместимый сервер ---
+# Открываем порт API и запускаем сервер совместимый с OpenAI
 EXPOSE 8000
 CMD ["python3", "-m", "llama_cpp.server.openai", \
      "--model", "/models/Meta-Llama-3-8B-Instruct.fp16.gguf", \
