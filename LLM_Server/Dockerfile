@@ -28,7 +28,7 @@ RUN git clone https://github.com/ggerganov/llama.cpp /llama.cpp && \
 COPY ./Model /Model
 
 # Запускаем OpenAI API сервер
-CMD ["llama-server", \
+CMD ["/llama.cpp/build/bin/server", \
      "-m", "/Model/Meta-Llama-3-8B-Instruct.fp16.gguf", \
      "--host", "0.0.0.0", \
      "--port", "8000", \

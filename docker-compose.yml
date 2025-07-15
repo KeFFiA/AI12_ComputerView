@@ -27,6 +27,7 @@ services:
             - capabilities: [gpu]
     environment:
       - MODEL=Meta-Llama-3-8B-Instruct.fp16.gguf
+      - NVIDIA_VISIBLE_DEVICES=all
     volumes:
       - ./Model:/Model
     restart: unless-stopped
