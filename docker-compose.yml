@@ -27,4 +27,3 @@ services:
     volumes:
       - ./Model:/Model
     restart: unless-stopped
-    command: ["sleep", "infinity"]
