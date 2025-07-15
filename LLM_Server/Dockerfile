@@ -22,13 +22,13 @@ RUN git clone https://github.com/ggerganov/llama.cpp /llama.cpp && \
     cd /llama.cpp && \
     cmake -B build -DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=86 . && \
     cmake --build build -j && \
-    ln -s /llama.cpp/build/bin/server /usr/local/bin/llama-server
+    ln -s /llama.cpp/build/bin/llama-server /usr/local/bin/llama-server
 
-# Копируем модель внутрь
+# Копируем модель внутрь контейнера
 COPY ./Model /Model
 
-# Запускаем OpenAI API сервер
-CMD ["/llama.cpp/build/bin/server", \
+# Запускаем llama-server с параметрами
+CMD ["llama-server", \
      "-m", "/Model/Meta-Llama-3-8B-Instruct.fp16.gguf", \
      "--host", "0.0.0.0", \
      "--port", "8000", \
