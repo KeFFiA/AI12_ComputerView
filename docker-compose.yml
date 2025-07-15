@@ -15,7 +15,7 @@ services:
 
   llama3:
     build:
-      context: ./Medical
+      context: ./LLM_Server
       dockerfile: Dockerfile
     image: llama3-api
     container_name: llama3-api
