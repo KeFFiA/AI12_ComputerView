@@ -37,4 +37,6 @@ ENV MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
 EXPOSE 8000
 CMD ["/llama.cpp/build/bin/llama-server", \
      "--model", "/models/Meta-Llama-3-8B-Instruct.fp16.gguf", \
+     "--n_gpu_layers", "100", \
+     "--n_ctx", "4096", \
      "--host", "0.0.0.0", "--port", "8000"]
