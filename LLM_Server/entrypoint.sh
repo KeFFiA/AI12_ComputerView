@@ -8,17 +8,19 @@ HOST="${HOST:-0.0.0.0}"
 N_GPU_LAYERS="${N_GPU_LAYERS:-100}"
 N_CTX="${N_CTX:-4096}"
 
-echo "Starting llama-server:"
-echo "  Модель: $MODEL_PATH"
-echo "  Host: $HOST"
-echo "  Port: $PORT"
-echo "  GPU layers: $N_GPU_LAYERS"
-echo "  Context size: $N_CTX"
+echo "== STARTING LLAMA SERVER ==" >&1
+echo "  Модель: $MODEL_PATH" >&1
+echo "  Host: $HOST" >&1
+echo "  Port: $PORT" >&1
+echo "  GPU layers: $N_GPU_LAYERS" >&1
+echo "  Context size: $N_CTX" >&1
 
-ls
-ls /models
+echo "== Contents of current dir: ==" >&1
+ls -la >&1
+echo "== Contents of /models: ==" >&1
+ls -la /models >&1
 
-exec /llama.cpp/build/bin/llama-server \
+/llama.cpp/build/bin/llama-server \
     --model "$MODEL_PATH" \
     --n_gpu_layers "$N_GPU_LAYERS" \
     --n_ctx "$N_CTX" \
