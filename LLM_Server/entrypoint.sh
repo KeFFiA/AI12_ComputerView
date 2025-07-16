@@ -15,6 +15,9 @@ echo "  Port: $PORT"
 echo "  GPU layers: $N_GPU_LAYERS"
 echo "  Context size: $N_CTX"
 
+ls
+ls /models
+
 exec /llama.cpp/build/bin/llama-server \
     --model "$MODEL_PATH" \
     --n_gpu_layers "$N_GPU_LAYERS" \
