@@ -24,6 +24,7 @@ services:
     volumes:
       - ./LLM_Server/Model:/models
     environment:
+      - MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     runtime: nvidia
