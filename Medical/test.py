@@ -10,7 +10,7 @@ from Medical.main import INPUT_DIR
 
 client = OpenAI(base_url="http://212.69.84.131:8000", api_key="llama")
 
-pdf_files = sorted(glob.glob(os.path.join(INPUT_DIR, "*.pdf")))
+pdf_files = sorted(glob.glob(os.path.join("/root/ASG_ComputerView/Medical/data/input_pdfs", "*.pdf")))
 print(f"[INFO] Найдено {len(pdf_files)} PDF-файлов")
 
 for pdf_path in pdf_files:
@@ -18,6 +18,8 @@ for pdf_path in pdf_files:
         file=Path(pdf_path),
         purpose="user_data"
     )
+
+    print(file.id, file.filename)
 
     response = client.chat.completions.parse(
         model="Meta-Llama-3-8B-Instruct",

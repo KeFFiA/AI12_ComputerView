@@ -19,4 +19,4 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY ./Medical /app
 
-CMD ["python", "main.py"]
+CMD ["python", "test.py"]
