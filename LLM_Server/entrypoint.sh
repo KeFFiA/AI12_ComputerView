@@ -20,9 +20,9 @@ ls -la >&1
 echo "== Contents of /models: ==" >&1
 ls -la /models >&1
 
-#exec /llama.cpp/build/bin/llama-server \
-#    --model "$MODEL_PATH" \
-#    --n_gpu_layers "$N_GPU_LAYERS" \
-#    --n_ctx "$N_CTX" \
-#    --host "$HOST" \
-#    --port "$PORT"
+exec /llama.cpp/build/bin/llama-server \
+    --model "$MODEL_PATH" \
+    --n_gpu_layers "$N_GPU_LAYERS" \
+    --n-ctx "$N_CTX" \
+    --host "$HOST" \
+    --port "$PORT"
