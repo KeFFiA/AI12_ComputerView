@@ -6,7 +6,7 @@ from ResponseModel import InsurancesResponse
 
 client = OpenAI(base_url="http://212.69.84.131:8000", api_key="llama")
 
-pdf_files = sorted(glob.glob(os.path.join("/pdfs", "*.pdf")))
+pdf_files = sorted(glob.glob(os.path.join("/app/data/input_pdfs", "*.pdf")))
 print(f"[INFO] Найдено {len(pdf_files)} PDF-файлов")
 
 for pdf_path in pdf_files:
