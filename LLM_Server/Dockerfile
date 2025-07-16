@@ -1,7 +1,7 @@
 FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV CUDA_LIB_DIR=/usr/local/cuda/lib64/stubs
+ENV CUDA_LIB_DIR=/usr/local/cuda/lib64
 ENV LD_LIBRARY_PATH=${CUDA_LIB_DIR}:${LD_LIBRARY_PATH}
 ENV LIBRARY_PATH=${CUDA_LIB_DIR}:${LIBRARY_PATH}
 
@@ -12,10 +12,6 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     python3 python3-pip \
     && rm -rf /var/lib/apt/lists/*
-
-# Символические ссылки на libcuda
-RUN ln -s ${CUDA_LIB_DIR}/libcuda.so /usr/lib/libcuda.so || true && \
-    ln -s ${CUDA_LIB_DIR}/libcuda.so.1 /usr/lib/libcuda.so.1 || true
 
 # Клонируем и собираем llama.cpp
 WORKDIR /llama.cpp
@@ -29,11 +25,11 @@ WORKDIR /app
 RUN pip install --upgrade pip
 RUN pip install llama-cpp-python[server] --no-cache-dir
 
-# Копируем универсальный entrypoint
+# Копируем entrypoint
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Указываем volume для моделей
+# Каталог для моделей
 VOLUME ["/models"]
 
 EXPOSE 8000
