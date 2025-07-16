@@ -1,7 +1,7 @@
 FROM nvidia/cuda:12.2.0-devel-ubuntu22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV CUDA_LIB_DIR=/usr/local/cuda/lib64
+ENV CUDA_LIB_DIR=/usr/local/cuda/lib64/stubs
 ENV LD_LIBRARY_PATH=${CUDA_LIB_DIR}:${LD_LIBRARY_PATH}
 ENV LIBRARY_PATH=${CUDA_LIB_DIR}:${LIBRARY_PATH}
 
@@ -13,7 +13,11 @@ RUN apt-get update && apt-get install -y \
     python3 python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# Клонируем и собираем llama.cpp
+# Прокладываем символическую ссылку на libcuda
+RUN ln -s ${CUDA_LIB_DIR}/libcuda.so /usr/lib/libcuda.so || true && \
+    ln -s ${CUDA_LIB_DIR}/libcuda.so /usr/lib/libcuda.so.1 || true
+
+# Клонируем llama.cpp и собираем с поддержкой CUDA
 WORKDIR /llama.cpp
 RUN git clone https://github.com/ggerganov/llama.cpp.git . && mkdir build
 
@@ -25,13 +29,13 @@ WORKDIR /app
 RUN pip install --upgrade pip
 RUN pip install llama-cpp-python[server] --no-cache-dir
 
-# Копируем entrypoint
+# Пробрасываем модель
+COPY /LLM_Server/Model /models
+
+# Открываем порт API и запускаем сервер совместимый с OpenAI
+EXPOSE 8000
+
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
-
-# Каталог для моделей
-VOLUME ["/models"]
-
-EXPOSE 8000
 
 ENTRYPOINT ["/app/entrypoint.sh"]
