@@ -1,15 +1,38 @@
+import json
 import os
 import glob
+
+from ResponseModel import InsurancesResponse
 from parser.extractor_pdfplumber import extract_from_pdf
 from parser.extractor_ocr import extract_with_ocr
-from parser.match_fields import match_and_fill_template
-
+from openai import OpenAI
 from openpyxl import load_workbook
 
 INPUT_DIR = "data/input_pdfs"
 TEMPLATE_PATH = "data/template.xlsx"
 OUTPUT_PATH = "output/final_result.xlsx"
 
+client = OpenAI(base_url="http://212.69.84.131:8000", api_key="llama")
+
+def extract_info(content: str):
+    # делаем запрос к API
+    response = client.chat.completions.parse(
+        model="Meta-Llama-3-8B-Instruct",
+        messages=[
+            {
+                "role": "system",
+                "content": "Extract all available insurance-related information from the page. The following fields should be identified and extracted if present: Company Name, Insurance Category, Number of Lives, Area of Coverage or Geographical Scope, Extended Territory for Emergency Treatment Only, Annual Aggregate Limit, Pre-existing Conditions, Network Type, OP Consultation, OP Physiotherapy, Pharmaceuticals, Diagnostics, Dental Benefit, Optical Benefit, Alternative Medicines, Maternity OP Benefit, Psychiatric OP Benefit, Outside Network Co-Insurance, IP Benefit, Maternity IP Benefit, Psychiatric IP Benefit, Organ Transplant (including donor charges but excluding cost of organ), In-patient Cash Benefit (if free treatment taken at a government facility in UAE), Annual Health Check-up, Value-Added Services, Gross Premium (including VAT & Basmah), Cost Per Member"
+            },
+            {
+                "role": "user",
+                "content": content
+            }
+        ],
+        response_format=InsurancesResponse
+    )
+
+    # возвращаем ответ
+    return response.choices[0].message.content
 
 def process_all_pdfs():
     print("[INFO] Загрузка шаблона Excel...")
@@ -31,8 +54,11 @@ def process_all_pdfs():
             print("[WARN] Недостаточно данных. Пробуем OCR...")
             extracted_data = extract_with_ocr(pdf_path)
 
-        # Сопоставляем и заполняем шаблон
-        match_and_fill_template(sheet, extracted_data, company_name)
+        print("extracted data: \n", extracted_data)
+        json_text = extract_info(content=json.dumps(extracted_data))
+        print("extracted info: \n", json_text)
+
+
 
     print("[INFO] Сохранение результата...")
     wb.save(OUTPUT_PATH)
