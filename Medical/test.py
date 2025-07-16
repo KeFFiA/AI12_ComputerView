@@ -1,12 +1,8 @@
 import glob
 import os
 from pathlib import Path
-
 from openai import OpenAI
-from pydantic import BaseModel
-
-from Medical.ResponseModel import InsurancesResponse
-from Medical.main import INPUT_DIR
+from ResponseModel import InsurancesResponse
 
 client = OpenAI(base_url="http://212.69.84.131:8000", api_key="llama")
 
