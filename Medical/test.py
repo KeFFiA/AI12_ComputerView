@@ -10,7 +10,7 @@ from Medical.main import INPUT_DIR
 
 client = OpenAI(base_url="http://212.69.84.131:8000", api_key="llama")
 
-pdf_files = sorted(glob.glob(os.path.join("/root/ASG_ComputerView/Medical/data/input_pdfs", "*.pdf")))
+pdf_files = sorted(glob.glob(os.path.join("/pdfs", "*.pdf")))
 print(f"[INFO] Найдено {len(pdf_files)} PDF-файлов")
 
 for pdf_path in pdf_files:
