@@ -30,7 +30,7 @@ RUN pip install --upgrade pip
 RUN pip install llama-cpp-python[server] --no-cache-dir
 
 # Пробрасываем модель
-COPY /LLM_Server/Model /models
+COPY ./Model /models
 
 # Открываем порт API и запускаем сервер совместимый с OpenAI
 EXPOSE 8000
