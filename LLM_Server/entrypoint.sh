@@ -22,7 +22,7 @@ ls -la /models >&1
 
 exec /llama.cpp/build/bin/llama-server \
     --model "$MODEL_PATH" \
-    --n_gpu_layers "$N_GPU_LAYERS" \
-    --n-ctx "$N_CTX" \
+    --gpu-layers "$N_GPU_LAYERS" \
+    --ctx-size "$N_CTX" \
     --host "$HOST" \
     --port "$PORT"
