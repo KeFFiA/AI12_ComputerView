@@ -22,7 +22,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./Model:/models
+      - ./LLM_Server/Model:/models
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
