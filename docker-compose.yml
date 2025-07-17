@@ -25,7 +25,7 @@ services:
       - ./LLM_Server/Model:/models
       - ./Medical/data/input_pdfs:/app/data/input_pdfs
     environment:
-      - MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
+      - MODEL_PATH=/models/mixtral-8x7b-instruct-v0.1.Q3_K_M.gguf
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
     runtime: nvidia

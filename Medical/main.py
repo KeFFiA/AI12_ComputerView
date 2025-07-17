@@ -21,14 +21,30 @@ def extract_info(content: str):
         messages=[
             {
                 "role": "system",
-                "content": "Extract all available insurance-related information from the page. The following fields should be identified and extracted if present: Company Name, Insurance Category, Number of Lives, Area of Coverage or Geographical Scope, Extended Territory for Emergency Treatment Only, Annual Aggregate Limit, Pre-existing Conditions, Network Type, OP Consultation, OP Physiotherapy, Pharmaceuticals, Diagnostics, Dental Benefit, Optical Benefit, Alternative Medicines, Maternity OP Benefit, Psychiatric OP Benefit, Outside Network Co-Insurance, IP Benefit, Maternity IP Benefit, Psychiatric IP Benefit, Organ Transplant (including donor charges but excluding cost of organ), In-patient Cash Benefit (if free treatment taken at a government facility in UAE), Annual Health Check-up, Value-Added Services, Gross Premium (including VAT & Basmah), Cost Per Member"
+                "content": (
+                    "You are a strict insurance data extractor. "
+                    "Extract only factual and structured information as per the schema below. "
+                    "Do NOT hallucinate or guess missing fields. If a field is missing, skip the record. "
+                    "Return your response as a valid JSON object in the following structure:\n\n"
+                    "{ \"insurances\": [ { <Insurance Fields> } ] }\n\n"
+                    "Fields include: Company Name, Insurance Category, Number of Lives, Area of Coverage or Geographical Scope, "
+                    "Extended Territory for Emergency Treatment Only, Annual Aggregate Limit, Pre-existing Conditions, "
+                    "Network Type, OP Consultation, OP Physiotherapy, Pharmaceuticals, Diagnostics, Dental Benefit, "
+                    "Optical Benefit, Alternative Medicines, Maternity OP Benefit, Psychiatric OP Benefit, "
+                    "Outside Network Co-Insurance, IP Benefit, Maternity IP Benefit, Psychiatric IP Benefit, "
+                    "Organ Transplant (including donor charges but excluding cost of organ), "
+                    "In-patient Cash Benefit (if free treatment taken at a government facility in UAE), "
+                    "Annual Health Check-up, Value-Added Services, Gross Premium (including VAT & Basmah), Cost Per Member."
+                ),
             },
             {
                 "role": "user",
-                "content": content
+                "content": json.dumps(content)
             }
         ],
-        response_format=InsurancesResponse
+        response_format=InsurancesResponse,
+        temperature=1.5,
+
     )
 
     # возвращаем ответ
@@ -50,12 +66,12 @@ def process_all_pdfs():
         extracted_data = extract_from_pdf(pdf_path)
 
         # Если данных слишком мало — пробуем OCR
-        if not extracted_data or len(extracted_data.get("text", "")) < 100:
+        if not extracted_data:
             print("[WARN] Недостаточно данных. Пробуем OCR...")
             extracted_data = extract_with_ocr(pdf_path)
 
         print("extracted data: \n", extracted_data)
-        json_text = extract_info(content=json.dumps(extracted_data))
+        json_text = extract_info(content=extracted_data)
         print("extracted info: \n", json_text)
 
 
