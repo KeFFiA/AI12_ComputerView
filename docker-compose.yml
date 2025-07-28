@@ -13,6 +13,18 @@ services:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
 
+  claims_parser:
+    build:
+      context: .
+      dockerfile: Claims/Dockerfile
+    container_name: claims_pdf_parser
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
   llama3:
     build:
       context: ./LLM_Server
@@ -23,9 +35,13 @@ services:
       - "8000:8000"
     volumes:
       - ./LLM_Server/Model:/models
-      - ./Medical/data/input_pdfs:/app/data/input_pdfs
+      - ./Medical/data/input_pdfs_claims:/app/data/input_pdfs_claims
     environment:
       - MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - THREADS=32
+      - THREADS_BATCH=16
+      - BATCH_SIZE=4096
+      - N_GPU_LAYERS=100
     runtime: nvidia
