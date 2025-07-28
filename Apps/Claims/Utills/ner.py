@@ -1,6 +1,6 @@
 from transformers import pipeline
 
-ner_pipeline = pipeline("token-classification", model="dslim/bert-base-NER", aggregation_strategy="simple")
+ner_pipeline = pipeline("token-classification", model="dslim/bert-base-NER", aggregation_strategy="simple", device=0)
 
 def extract_entities(text: str) -> dict:
     raw_entities = ner_pipeline(text)
