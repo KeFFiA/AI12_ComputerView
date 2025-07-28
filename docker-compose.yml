@@ -22,11 +22,14 @@ services:
     container_name: claims_pdf_parser
     depends_on:
       - llama3
+    runtime: nvidia
     volumes:
       - ./data:/app/data
       - ./output:/app/output
     environment:
       - PYTHONUNBUFFERED=1
+      - TRANSFORMERS_CACHE=/app/.cache
+      - CUDA_VISIBLE_DEVICES=0
     restart: unless-stopped
 
   llama3:
