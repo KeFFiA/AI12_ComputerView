@@ -2,11 +2,11 @@ import asyncio
 import glob
 import os
 
-from .Utills.normalizer import normalize_answer
-from .parser import get_pdf_text
-from .chunker import split_text
-from .llama_client import ask_llama
-from .Utills.aggregator import aggregate_normalized
+from Utills.normalizer import normalize_answer
+from parser import get_pdf_text
+from chunker import split_text
+from llama_client import ask_llama
+from Utills.aggregator import aggregate_normalized
 
 
 INPUT_DIR = "data/input_pdfs_claims"

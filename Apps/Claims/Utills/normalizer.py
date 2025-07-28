@@ -1,9 +1,9 @@
 import re
 from datetime import datetime
 from typing import Optional
-from .ner import extract_entities
+from ner import extract_entities
 
-from .event_classifier import extract_events
+from event_classifier import extract_events
 
 
 def normalize_date(text: str) -> Optional[str]:
