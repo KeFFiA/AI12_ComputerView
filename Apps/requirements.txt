@@ -3,7 +3,10 @@ openpyxl==3.1.5
 pytesseract==0.3.13
 pdf2image==1.17.0
 RapidFuzz==3.13.0
-torch==2.7.1
+torch==2.2.2+cu121
+torchvision==0.17.2+cu121
+torchaudio==2.2.2+cu121
+--extra-index-url https://download.pytorch.org/whl/cu121
 sentence-transformers==5.0.0
 openai==1.95.1
 pydantic==2.11.7
