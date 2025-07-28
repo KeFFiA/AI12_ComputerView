@@ -22,9 +22,11 @@ RUN apt-get update && \
 
 COPY /requirements.txt /app/requirements.txt
 WORKDIR /app
-RUN python -m pip install --upgrade pip && pip install -r requirements.txt
+RUN python -m pip install --upgrade pip && \
+    pip install torch==2.2.2+cu121 torchvision==0.17.2+cu121 torchaudio==2.2.2+cu121 \
+    --extra-index-url https://download.pytorch.org/whl/cu121 && \
+    pip install -r requirements.txt
 
 COPY ./Claims /app
 
-# ✅ Запуск
 CMD ["python", "main.py"]
