@@ -6,6 +6,8 @@ services:
       context: Apps/
       dockerfile: Medical/Dockerfile
     container_name: medical_pdf_parser
+    depends_on:
+      - llama3
     volumes:
       - ./data:/app/data
       - ./output:/app/output
@@ -18,6 +20,8 @@ services:
       context: Apps/
       dockerfile: Claims/Dockerfile
     container_name: claims_pdf_parser
+    depends_on:
+      - llama3
     volumes:
       - ./data:/app/data
       - ./output:/app/output
