@@ -3,8 +3,8 @@ version: '2.4'
 services:
   medical_parser:
     build:
-      context: .
-      dockerfile: Medical/Dockerfile
+      context: Apps
+      dockerfile: Apps/Medical/Dockerfile
     container_name: medical_pdf_parser
     volumes:
       - ./data:/app/data
@@ -15,8 +15,8 @@ services:
 
   claims_parser:
     build:
-      context: .
-      dockerfile: Claims/Dockerfile
+      context: Apps
+      dockerfile: Apps/Claims/Dockerfile
     container_name: claims_pdf_parser
     volumes:
       - ./data:/app/data

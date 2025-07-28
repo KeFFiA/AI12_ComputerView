@@ -13,7 +13,7 @@ RUN apt-get update && \
     libxrender-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY /requirements.txt /app/requirements.txt
+COPY /Apps/requirements.txt /app/requirements.txt
 WORKDIR /app
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
