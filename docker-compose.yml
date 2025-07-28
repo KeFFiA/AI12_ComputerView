@@ -29,8 +29,7 @@ services:
       - ./transformers_cache:/app/.cache
     environment:
       - PYTHONUNBUFFERED=1
-      - TRANSFORMERS_CACHE=/app/.cache
-      - CUDA_VISIBLE_DEVICES=0
+      - CUDA_VISIBLE_DEVICES=all
     restart: unless-stopped
 
   llama3:
