@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from typing import Optional
-from ner import extract_entities
+from ..Utills.ner import extract_entities
 
 from event_classifier import extract_events
 
@@ -25,7 +25,7 @@ def normalize_money(text: str) -> Optional[float]:
     if match:
         return float(match.group(1).replace(",", ""))
     return None
-
+`
 def extract_aircraft_info(text: str) -> dict:
     return {
         "type": re.search(r"Boeing \d+ Max \d|Airbus \w+", text) and re.search(r"Boeing \d+ Max \d|Airbus \w+", text).group(),
