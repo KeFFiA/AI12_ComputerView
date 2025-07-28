@@ -1,6 +1,6 @@
 from transformers import pipeline
 
-event_pipeline = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device="cuda")
+event_pipeline = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
 
 # Возможные типы событий
 EVENT_LABELS = [
