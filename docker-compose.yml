@@ -27,7 +27,7 @@ services:
 
   llama3:
     build:
-      context: ./LLM_Server
+      context: LLM_Server
       dockerfile: Dockerfile
     image: asg_llama3
     container_name: llama3-api
