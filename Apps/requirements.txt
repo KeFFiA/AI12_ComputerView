@@ -7,6 +7,7 @@ torch==2.2.2+cu121
 torchvision==0.17.2+cu121
 torchaudio==2.2.2+cu121
 --extra-index-url https://download.pytorch.org/whl/cu121
+numpy<2
 sentence-transformers==5.0.0
 openai==1.95.1
 pydantic==2.11.7
