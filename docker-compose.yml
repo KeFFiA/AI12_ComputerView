@@ -4,7 +4,7 @@ services:
   medical_parser:
     build:
       context: Apps/
-      dockerfile: Apps/Medical/Dockerfile
+      dockerfile: Medical/Dockerfile
     container_name: medical_pdf_parser
     volumes:
       - ./data:/app/data
@@ -16,7 +16,7 @@ services:
   claims_parser:
     build:
       context: Apps/
-      dockerfile: Apps/Claims/Dockerfile
+      dockerfile: Claims/Dockerfile
     container_name: claims_pdf_parser
     volumes:
       - ./data:/app/data
