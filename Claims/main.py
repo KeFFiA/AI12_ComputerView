@@ -26,7 +26,7 @@ async def main(path):
         results = []
 
         for i, chunk in enumerate(chunks):
-            prompt = f"Here is part of the document:\n{chunk}\n\nHighlight key facts, dates, amounts, numbers, names, aircraft properties and others."
+            prompt = f"Here is part of the document:\n{chunk}\n\nCheck and create JSON"
             print("Sending chunk {}...".format(i))
             answer = await ask_llama(prompt)
             print("Got answer\nNormalizing...")
