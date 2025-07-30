@@ -1,5 +1,6 @@
 services:
   medical_parser:
+    image: asg_computerview_medical_parser:latest
     build:
       context: Apps/
       dockerfile: Medical/Dockerfile
@@ -9,6 +10,7 @@ services:
     volumes:
       - ./data:/app/data
       - ./output:/app/output
+      - ./transformers_cache:/app/.cache
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
@@ -19,6 +21,7 @@ services:
             - capabilities: [gpu]
 
   claims_parser:
+    image: asg_computerview_claims_parser:latest
     build:
       context: Apps/
       dockerfile: Claims/Dockerfile
@@ -40,10 +43,10 @@ services:
             - capabilities: [gpu]
 
   llama3:
+    image: asg_llama3:latest
     build:
       context: LLM_Server
       dockerfile: Dockerfile
-    image: asg_llama3
     container_name: llama3-api
     ports:
       - "8000:8000"
