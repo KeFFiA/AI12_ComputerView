@@ -5,3 +5,4 @@
 /LLM_Server/Model/Meta-Llama-3-8B-Instruct.fp16.gguf
 
 /LLM_Server/Model/mixtral-8x7b-instruct-v0.1.Q3_K_M.gguf
+/Apps/Medical/test.py

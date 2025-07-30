@@ -6,7 +6,7 @@ docker run -d --rm \
   --name llama3-api \
   -p 8000:8000 \
   -v "$BASE_DIR/LLM_Server/Model":/models \
-  -v "$BASE_DIR/Medical/data/input_pdfs_claims":/app/data/input_pdfs_claims \
+  -v "$BASE_DIR/Apps/Medical/data/input_pdfs":/app/data/input_pdfs \
   -e MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf \
   -e NVIDIA_VISIBLE_DEVICES=all \
   -e NVIDIA_DRIVER_CAPABILITIES=compute,utility \

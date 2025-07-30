@@ -57,7 +57,7 @@ services:
       - "8000:8000"
     volumes:
       - ./LLM_Server/Model:/models
-      - ./Medical/data/input_pdfs_claims:/app/data/input_pdfs_claims
+      - ./Medical/data/input_pdfs:/app/data/input_pdfs
     environment:
       - MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
       - NVIDIA_VISIBLE_DEVICES=all
