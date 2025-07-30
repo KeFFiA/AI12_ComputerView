@@ -5,7 +5,7 @@ echo "Starting all services..."
 echo " "
 echo "Starting medical_parser..."
 docker run -d --rm \
-  --gpus all \
+  --gpus=all \
   --name medical_pdf_parser \
   -v "$BASE_DIR/data":/app/data \
   -v "$BASE_DIR/output":/app/output \
@@ -16,7 +16,7 @@ docker run -d --rm \
 
 echo "Starting claims_parser..."
 docker run -d --rm \
-  --gpus all \
+  --gpus=all \
   --name claims_pdf_parser \
   -v "$BASE_DIR/data":/app/data \
   -v "$BASE_DIR/output":/app/output \
@@ -27,7 +27,7 @@ docker run -d --rm \
 
 echo "Starting llama3-api..."
 docker run -d --rm \
-  --gpus all \
+  --gpus=all \
   --name llama3-api \
   -p 8000:8000 \
   -v "$BASE_DIR/LLM_Server/Model":/models \

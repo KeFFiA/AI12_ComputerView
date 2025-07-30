@@ -2,7 +2,7 @@
 BASE_DIR=$(dirname "$(realpath "$0")")
 
 docker run -d --rm \
-  --gpus all \
+  --gpus=all \
   --name llama3-api \
   -p 8000:8000 \
   -v "$BASE_DIR/LLM_Server/Model":/models \

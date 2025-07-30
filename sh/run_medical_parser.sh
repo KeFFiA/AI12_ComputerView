@@ -2,7 +2,7 @@
 BASE_DIR=$(dirname "$(realpath "$0")")
 
 docker run -d --rm \
-  --gpus all \
+  --gpus=all \
   --name medical_pdf_parser \
   -v "$BASE_DIR/data":/app/data \
   -v "$BASE_DIR/output":/app/output \
