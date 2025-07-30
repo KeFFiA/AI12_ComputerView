@@ -29,4 +29,7 @@ RUN python -m pip install --upgrade pip && \
 
 COPY ./Claims /app
 
-CMD ["python", "main.py"]
+ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/cuda/lib:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+
+# CMD ["python", "main.py"]
+CMD [ "sleep", "infinity" ]
