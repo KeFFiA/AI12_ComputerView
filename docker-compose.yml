@@ -13,7 +13,6 @@ services:
       - ./transformers_cache:/app/.cache
     environment:
       - PYTHONUNBUFFERED=1
-      - CUDA_VISIBLE_DEVICES=all
     restart: unless-stopped
     deploy:
       resources:
@@ -37,7 +36,6 @@ services:
       - ./transformers_cache:/app/.cache
     environment:
       - PYTHONUNBUFFERED=1
-      - CUDA_VISIBLE_DEVICES=all
     restart: unless-stopped
     deploy:
       resources:
