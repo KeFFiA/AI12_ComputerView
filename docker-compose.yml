@@ -1,4 +1,4 @@
-version: '2.4'
+version: "3.8"
 
 services:
   medical_parser:
@@ -13,6 +13,9 @@ services:
       - ./output:/app/output
     environment:
       - PYTHONUNBUFFERED=1
+    deploy: { }
+    device_requests:
+      - capabilities: [ gpu ]
     restart: unless-stopped
 
   claims_parser:
@@ -22,14 +25,15 @@ services:
     container_name: claims_pdf_parser
     depends_on:
       - llama3
-    runtime: nvidia
     volumes:
       - ./data:/app/data
       - ./output:/app/output
       - ./transformers_cache:/app/.cache
     environment:
       - PYTHONUNBUFFERED=1
-      - CUDA_VISIBLE_DEVICES=all
+    deploy: {}
+    device_requests:
+      - capabilities: [gpu]
     restart: unless-stopped
 
   llama3:
@@ -51,4 +55,7 @@ services:
       - THREADS_BATCH=16
       - BATCH_SIZE=4096
       - N_GPU_LAYERS=100
-    runtime: nvidia
+    deploy: {}
+    device_requests:
+      - capabilities: [gpu]
+    restart: unless-stopped
