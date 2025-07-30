@@ -15,11 +15,8 @@ services:
       - PYTHONUNBUFFERED=1
       - CUDA_VISIBLE_DEVICES=all
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
+    device_requests:
+      - capabilities: [ gpu ]
 
   claims_parser:
     image: asg_computerview_claims_parser:latest
@@ -37,11 +34,8 @@ services:
       - PYTHONUNBUFFERED=1
       - CUDA_VISIBLE_DEVICES=all
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
+    device_requests:
+      - capabilities: [ gpu ]
 
   llama3:
     image: asg_llama3:latest
@@ -63,8 +57,5 @@ services:
       - BATCH_SIZE=4096
       - N_GPU_LAYERS=100
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
+    device_requests:
+      - capabilities: [ gpu ]
