@@ -30,6 +30,4 @@ RUN python -m pip install --upgrade pip && \
 
 COPY ./Claims /app
 
-# CMD ["python", "main.py"]
-
-CMD [ "sleep", "infinity" ]
+CMD ["python", "main.py"]
