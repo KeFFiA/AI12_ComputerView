@@ -1,16 +1,45 @@
 #!/bin/bash
 BASE_DIR=$(dirname "$(realpath "$0")")
 
-function start_all() {
-  echo "Starting all services..."
-  bash "$BASE_DIR/run_medical_parser.sh"
-  bash "$BASE_DIR/run_claims_parser.sh"
-  bash "$BASE_DIR/run_llama3.sh"
+function start() {
+  case "$2" in
+    medical)
+      bash "$BASE_DIR/run_medical_parser.sh"
+      ;;
+    claims)
+      bash "$BASE_DIR/run_claims_parser.sh"
+      ;;
+    llama3)
+      bash "$BASE_DIR/run_llama3.sh"
+      ;;
+    all)
+      bash "$BASE_DIR/run_services.sh"
+      ;;
+    *)
+      echo "Usage: $0 start {medical|claims|llama3|all}"
+      ;;
+  esac
 }
 
-function stop_all() {
-  echo "Stopping all services..."
-  docker stop medical_pdf_parser claims_pdf_parser llama3-api
+function stop() {
+  case "$2" in
+    medical)
+      docker stop medical_pdf_parser
+      ;;
+    claims)
+      docker stop claims_pdf_parser
+      ;;
+    llama3)
+      docker stop llama3-api
+      ;;
+    all)
+      echo "Stopping all services..."
+      docker stop medical_pdf_parser claims_pdf_parser llama3-api
+      ;;
+    *)
+      echo "Usage: $0 stop {medical|claims|llama3|all}"
+      ;;
+  esac
 }
 
 function status() {
@@ -19,7 +48,7 @@ function status() {
 }
 
 function logs() {
-  case "$1" in
+  case "$2" in
     medical)
       bash "$BASE_DIR/logs_medical_parser.sh"
       ;;
@@ -30,28 +59,32 @@ function logs() {
       bash "$BASE_DIR/logs_llama3.sh"
       ;;
     all)
-      bash "$BASE_DIR/logs_llama3.sh"
+      echo "Tailing logs for all containers. Use Ctrl+C to stop."
+      docker logs -f medical_pdf_parser &
+      docker logs -f claims_pdf_parser &
+      docker logs -f llama3-api &
+      wait
       ;;
     *)
-      echo "Using: $0 logs {medical|claims|llama3|all}"
+      echo "Usage: $0 logs {medical|claims|llama3|all}"
       ;;
   esac
 }
 
 case "$1" in
   start)
-    start_all
+    start "$@"
     ;;
   stop)
-    stop_all
+    stop "$@"
     ;;
   status)
     status
     ;;
   logs)
-    logs "$2"
+    logs "$@"
     ;;
   *)
-    echo "Using: $0 {start|stop|status|logs}"
+    echo "Usage: $0 {start|stop|status|logs}"
     ;;
 esac

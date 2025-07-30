@@ -1,7 +1,8 @@
 #!/bin/bash
 
 BASE_DIR=$(pwd)
-
+echo "Starting all services..."
+echo " "
 echo "Starting medical_parser..."
 docker run -d --rm \
   --gpus all \
