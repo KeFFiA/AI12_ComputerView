@@ -40,9 +40,9 @@ test = {
 }
 
 
-INPUT_DIR = "data/input_pdfs"
+INPUT_DIR = "data/input_pdfs_med"
 TEMPLATE_PATH = "data/template.xlsx"
-OUTPUT_PATH = "output/final_result.xlsx"
+OUTPUT_PATH = "output/med/final_result.xlsx"
 
 client = OpenAI(base_url="http://212.69.84.131:8000", api_key="llama")
 
