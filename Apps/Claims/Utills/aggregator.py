@@ -28,11 +28,15 @@ def aggregate_normalized(results: list) -> dict:
         if not agg["incident_date"] and n.get("incident_date"):
             agg["incident_date"] = n["incident_date"]
 
-        for loc in n.get("locations", []):
-            agg["locations"].update(loc)
+        if isinstance(n.get("locations"), list):
+            for loc in n.get("locations", []):
+                if loc:
+                    agg["locations"].add(loc)
 
-        for ev in n.get("event"):
-            agg["events"].update(ev)
+        if isinstance(n.get("events"), list):
+            for ev in n["events"]:
+                if ev:
+                    agg["events"].add(ev)
 
         ac = n.get("aircraft", {})
         for key in ["type", "registration", "serial_number"]:
