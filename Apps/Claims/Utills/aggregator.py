@@ -44,7 +44,7 @@ def aggregate_normalized(results: list) -> dict:
                 agg["aircraft"][key] = ac[key]
 
         claim = n.get("claim", {})
-        for key in ["claimed", "deductible", "net_paid"]:
+        for key in ["claimed", "deductible", "net_paid", "amounts"]:
             if claim.get(key):
                 agg["claim"][key] = max(agg["claim"].get(key, 0), claim[key])
         if claim.get("currency"):
