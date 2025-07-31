@@ -9,10 +9,10 @@ def aggregate_normalized(results: list) -> dict:
             "serial_number": None
         },
         "claim": {
-            "claimed": 0.0,
-            "deductible": 0.0,
-            "net_paid": 0.0,
-            "currency": "USD"
+            "claimed": None,
+            "deductible": None,
+            "net_paid": None,
+            "amounts": [],
         },
         "parties": {
             "insured": set(),
@@ -43,12 +43,18 @@ def aggregate_normalized(results: list) -> dict:
             if not agg["aircraft"].get(key) and ac.get(key):
                 agg["aircraft"][key] = ac[key]
 
+        # Объединяем суммы
         claim = n.get("claim", {})
-        for key in ["claimed", "deductible", "net_paid", "amounts"]:
-            if claim.get(key):
-                agg["claim"][key] = max(agg["claim"].get(key, 0), claim[key])
-        if claim.get("currency"):
-            agg["claim"]["currency"] = claim["currency"]
+
+        for key in ["claimed", "deductible", "net_paid"]:
+            value = claim.get(key)
+            if value and isinstance(value, dict) and "value" in value:
+                prev = agg["claim"].get(key)
+                if prev is None or value["value"] > prev["value"]:
+                    agg["claim"][key] = value  # сохраняем dict с currency + value
+
+        if isinstance(claim.get("amounts"), list):
+            agg["claim"]["amounts"].extend(claim["amounts"])
 
         parties = n.get("parties", {})
         if insured := parties.get("insured"):
