@@ -1,10 +1,22 @@
 import re
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Tuple
 from .ner import extract_entities
 
 from .event_classifier import extract_events
 
+
+def extract_labeled_amount(text: str, label: str) -> Optional[Tuple[str, float]]:
+    """
+    Ищет строку вроде 'CLAIMED AMOUNT USD 123,456.78' и возвращает кортеж ('USD', 123456.78)
+    """
+    pattern = rf"{re.escape(label)}\s+([A-Z]{{3}}|\$|€|£|¥)?\s?([\d,]+\.\d{{2}})"
+    match = re.search(pattern, text, re.IGNORECASE)
+    if match:
+        currency = match.group(1).strip().upper() if match.group(1) else "UNKNOWN"
+        amount = float(match.group(2).replace(",", ""))
+        return currency, amount
+    return None
 
 def normalize_date(text: str) -> Optional[str]:
     patterns = [r"\b\d{1,2} [A-Z][a-z]+ \d{4}\b", r"\b\d{2}/\d{2}/\d{4}\b", r"\b\d{4}-\d{2}-\d{2}\b"]
@@ -33,23 +45,18 @@ def extract_aircraft_info(text: str) -> dict:
         "serial_number": re.search(r"\b\d{5,}\b", text) and re.search(r"\b\d{5,}\b", text).group()
     }
 
-# def normalize_answer(answer: str) -> dict:
-#     return {
-#         "incident_date": normalize_date(answer),
-#         "location": re.search(r"(Palma de Mallorca|Athens|Madrid|London|Greece|Spain)", answer) and re.search(r"(Palma de Mallorca|Athens|Madrid|London|Greece|Spain)", answer).group(),
-#         "event": re.search(r"(engine surge|bird strike|collision|fire|damage)", answer, re.IGNORECASE) and re.search(r"(engine surge|bird strike|collision|fire|damage)", answer, re.IGNORECASE).group(),
-#         "aircraft": extract_aircraft_info(answer),
-#         "claim": {
-#             "claimed": normalize_money(answer),
-#             "deductible": normalize_money(answer.split("deductible")[1]) if "deductible" in answer else None,
-#             "net_paid": normalize_money(answer.split("net")[1]) if "net" in answer else None,
-#             "currency": "USD"
-#         },
-#         "parties": {
-#             "insured": re.search(r"(SMARTLYNX AIRLINES|AVION EXPRESS|Chapman Freeborn)", answer, re.IGNORECASE) and re.search(r"(SMARTLYNX AIRLINES|AVION EXPRESS|Chapman Freeborn)", answer, re.IGNORECASE).group(),
-#             "insurer": re.search(r"(Howden UK Group|ADNIC|Sedgwick|Lloyds)", answer) and re.search(r"(Howden UK Group|ADNIC|Sedgwick|Lloyds)", answer).group()
-#         }
-#     }
+def normalize_money_all(text: str) -> list[tuple[str, float]]:
+    # Поддержка стандартных валют и знаков
+    pattern = r'(?P<currency>[A-Z]{3}|[$€£¥])[\s]?(?P<amount>\d{1,3}(?:,\d{3})*(?:\.\d{2})?)'
+    results = []
+
+    for match in re.finditer(pattern, text):
+        currency = match.group("currency").upper()
+        amount = float(match.group("amount").replace(",", ""))
+        results.append((currency, amount))
+
+    return results
+
 
 def normalize_answer(text: str) -> dict:
     ner = extract_entities(text)
@@ -58,24 +65,27 @@ def normalize_answer(text: str) -> dict:
     insured = [org for org in ner.get("ORG", []) if "AIRLINES" in org.upper()]
     insurer = [org for org in ner.get("ORG", []) if any(x in org.upper() for x in ["HOWDEN", "INSURANCE", "SEDGWICK", "ADNIC"])]
 
-    # Парсим деньги
-    money_values = []
-    for m in ner.get("MONEY", []):
-        try:
-            m_clean = m.replace(",", "").replace("USD", "").replace("$", "").strip()
-            money_values.append(float(m_clean))
-        except:
-            continue
+    # Все суммы (в свободном тексте)
+    money_values = normalize_money_all(text)
+
+    # Статьи расходов
+    claimed = extract_labeled_amount(text, "CLAIMED AMOUNT")
+    deductible = extract_labeled_amount(text, "LESS APPLICABLE DEDUCTIBLE")
+    net_paid = extract_labeled_amount(text, "NET CLAIMED AMOUNT")
+
+    claim = {
+        "amounts": [{"currency": cur, "value": val} for cur, val in money_values],
+        "claimed": {"currency": claimed[0], "value": claimed[1]} if claimed else None,
+        "deductible": {"currency": deductible[0], "value": deductible[1]} if deductible else None,
+        "net_paid": {"currency": net_paid[0], "value": net_paid[1]} if net_paid else None
+    }
 
     return {
         "incident_date": ner["DATE"][0] if ner.get("DATE") else None,
         "locations": ner.get("LOC", []),
         "events": extract_events(text),
         "aircraft": extract_aircraft_info(text),
-        "claim": {
-            "amounts": money_values,
-            "currency": "USD"
-        },
+        "claim": claim,
         "parties": {
             "insured": insured,
             "insurer": insurer

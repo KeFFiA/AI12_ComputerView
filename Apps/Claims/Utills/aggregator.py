@@ -28,11 +28,11 @@ def aggregate_normalized(results: list) -> dict:
         if not agg["incident_date"] and n.get("incident_date"):
             agg["incident_date"] = n["incident_date"]
 
-        if loc := n.get("location"):
-            agg["locations"].add(loc)
+        for loc in n.get("locations", []):
+            agg["locations"].update(loc)
 
-        if ev := n.get("event"):
-            agg["events"].add(ev)
+        for ev in n.get("event"):
+            agg["events"].update(ev)
 
         ac = n.get("aircraft", {})
         for key in ["type", "registration", "serial_number"]:
@@ -48,9 +48,9 @@ def aggregate_normalized(results: list) -> dict:
 
         parties = n.get("parties", {})
         if insured := parties.get("insured"):
-            agg["parties"]["insured"].add(insured)
+            agg["parties"]["insured"].update(insured)
         if insurer := parties.get("insurer"):
-            agg["parties"]["insurer"].add(insurer)
+            agg["parties"]["insurer"].update(insurer)
 
     # Преобразуем set → list (для JSON)
     agg["locations"] = sorted(agg["locations"])
