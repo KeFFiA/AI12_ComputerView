@@ -57,7 +57,7 @@ services:
     volumes:
 #      - ./LLM_Server/Model:/models
 #      - ./Medical/data/input_pdfs:/app/data/input_pdfs
-      - ollama_data:/root/.ollama
+      - ./ollama_data:/root/.ollama
 #    environment:
 #      - MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
 #      - NVIDIA_VISIBLE_DEVICES=all
