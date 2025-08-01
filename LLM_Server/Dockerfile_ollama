@@ -18,8 +18,6 @@ RUN ln -s ${CUDA_LIB_DIR}/libcuda.so /usr/lib/libcuda.so || true && \
 
 RUN curl -fsSL https://ollama.com/install.sh | bash
 
-RUN ollama pull llama3
-
 EXPOSE 11434
 
 CMD ["ollama", "serve"]
