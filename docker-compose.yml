@@ -59,7 +59,8 @@ services:
 #      - ./LLM_Server/Model:/models
 #      - ./Medical/data/input_pdfs:/app/data/input_pdfs
       - ./ollama_data:/root/.ollama
-#    environment:
+    environment:
+      - OLLAMA_HOST=0.0.0.0
 #      - MODEL_PATH=/models/Meta-Llama-3-8B-Instruct.fp16.gguf
 #      - NVIDIA_VISIBLE_DEVICES=all
 #      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
