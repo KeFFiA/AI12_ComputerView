@@ -49,7 +49,8 @@ services:
     image: asg_llama3:latest
     build:
       context: LLM_Server
-      dockerfile: Dockerfile
+#      dockerfile: Dockerfile
+      dockerfile: Dockerfile_ollama
     container_name: llama3-api
     ports:
 #      - "8000:8000"
