@@ -75,8 +75,10 @@ services:
       - llama3
     ports:
       - "8080:8080"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
-      - OLLAMA_API_BASE_URL=http://llama3-api:11434
+      - OLLAMA_API_BASE_URL=http://host.docker.internal:11434
       - WEBUI_SECRET_KEY=ai12
       - CORS_ALLOW_ORIGIN=*
       - DISABLE_SIGNUP=false
