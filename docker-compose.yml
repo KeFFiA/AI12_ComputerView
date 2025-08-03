@@ -100,4 +100,6 @@ services:
 
 networks:
   ollama-net:
+    name: ollama-net
     driver: bridge
+    attachable: true
