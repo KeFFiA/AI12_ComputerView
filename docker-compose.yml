@@ -78,7 +78,7 @@ services:
     environment:
       - OLLAMA_API_BASE_URL=http://llama3-api:11434
       - WEBUI_SECRET_KEY=ai12
-#      - CORS_ALLOW_ORIGIN=https://yourdomain.com
+      - CORS_ALLOW_ORIGIN=*
       - DISABLE_SIGNUP=false
       - RAG_ENABLED=true
       - EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
