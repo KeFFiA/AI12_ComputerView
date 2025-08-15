@@ -1,0 +1,20 @@
+{
+    "msn": "int(123456) or None",
+    "aircraft": "str(Airbus A320)",
+    "registration": "str(ES-SAX)",
+    "insured": "str(SmartLynx Airlines)",
+    "insurer": "str(Starr Underwriting Agents Limited)",
+    "cause": "str(Bird strike on No.2 engine)",
+    "location": "str(Palma de Mallorca, Spain)",
+    "dol": "Date(2024-05-28)",
+    "indemnity_reserve": "float(266436.52)",
+    "indemnity_reserve_currency": "str(USD)",
+    "paid_to_date": "float(12345.00) or None",
+    "summary": "str(The aircraft was operating an ACMI wet lease on behalf of Air Peace and was\npreparing to operate a service from Lagos, Nigeria, to Abuja, Nigeria. Following clearance from Air Traffic\nControl (ATC), the pushback of the aircraft commenced. However, after approximately 50 metres there was\na sudden stop with sharp movement. The aircraft was towed back to the stand, and preliminary inspections\nrevealed a deflated Nose Landing Gear (NLG) tyre and anticipated towing angle exceedance. Airbus was\ncontacted, requesting further instructions, and after undertaking a detailed analysis, Airbus advised that the\naircraft would be required to be jacked to allow extension/retraction tests to be undertaken in accordance\nwith the Aircraft Maintenance Manual (AMM). Due to the lack of facilities in Lagos, permission was granted\nby Airbus to allow a ferry flight to SmartLynx Airlines’ usual maintenance provider in Malta in a gear down\nconfiguration, where the required inspections were undertaken. On 3 August 2023, Airbus contacted\nSmartLynx advising that the Nose Landing Gear (NLG) would require to be removed and sent for shop\ninspection due to a potential overload of the structure)",
+    "contact_information": {
+        "name": "str(Gary Clift)",
+        "title": "str(Aviation Claims Manager)",
+        "phone": "str(+44 (0)788 580 3530)",
+        "email": "str(gary.clift@mclarens.com)"
+    }
+}
