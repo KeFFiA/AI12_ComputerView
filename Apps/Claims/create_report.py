@@ -38,6 +38,7 @@ if __name__ == "__main__":
     "contact_name": "Sam Edwards",
     "contact_title": "Senior Surveyor & Adjuster – Aviation",
     "contact_phone": "+44 7795666031",
-    "contact_email": "sam.edwards@sedgwick.com"
+    "contact_email": "sam.edwards@sedgwick.com",
+    "filename": "testtest"
 }
-    create_report(data=test)
+    create_report(data=test, filename='testtest')
