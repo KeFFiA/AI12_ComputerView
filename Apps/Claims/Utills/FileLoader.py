@@ -10,8 +10,8 @@ from chain import process_pdf
 
 logger = setup_logger(__name__)
 
-PATH = Path(os.getenv("LISTEN_DIR", "data/input_pdfs"))
-NOPASSED_DIR = Path(os.getenv("LISTEN_DIR", "data/nopassed_pdfs"))
+PATH = Path(os.getenv("LISTEN_DIR", "data/input_pdfs_claims"))
+NOPASSED_DIR = Path(os.getenv("LISTEN_DIR", "data/nopassed_pdfs_claims"))
 
 PATH.mkdir(parents=True, exist_ok=True)
 NOPASSED_DIR.mkdir(parents=True, exist_ok=True)
@@ -33,5 +33,5 @@ def findfiles():
                     shutil.move(pdf_file, target_path)
                     logger.info(f"Moved {pdf_file} -> {target_path}")
 
-        sleep(60)
+        sleep(30)
 
