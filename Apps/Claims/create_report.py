@@ -4,7 +4,7 @@ from pathlib import Path
 
 from Config import setup_logger
 
-FOLDER_PATH = Path("data/output")
+FOLDER_PATH = Path("data/output_claims")
 logger = setup_logger(__name__)
 
 FOLDER_PATH.mkdir(parents=True, exist_ok=True)
