@@ -36,6 +36,7 @@ services:
       - ./transformers_cache:/app/.cache
     environment:
       - PYTHONUNBUFFERED=1
+      - DB_URI_MAIN=postgresql+psycopg2://asgdevelop:asgdev1234567890@193.239.161.50/ai12_main
     restart: unless-stopped
     deploy:
       resources:
