@@ -11,7 +11,7 @@ FOLDER_PATH.mkdir(parents=True, exist_ok=True)
 
 def create_report(data: dict):
 
-    filename = FOLDER_PATH / f"{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.json"
+    filename = FOLDER_PATH / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
     with open(filename, "w", encoding="utf-8") as file:
         file.write(json.dumps(data, indent=4))
 

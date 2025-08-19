@@ -1,6 +1,6 @@
 from pydantic import ValidationError
 
-from create_excel import create_report
+from create_report import create_report
 from Config import PROMPT_TEMPLATE_JSON, setup_logger
 from summarize_chain import compare_data
 from Config.Templates import Claim
