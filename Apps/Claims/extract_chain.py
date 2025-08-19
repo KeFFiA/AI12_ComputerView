@@ -1,0 +1,45 @@
+import json
+import re
+
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_core.prompts import PromptTemplate
+from langchain_core.exceptions import OutputParserException
+
+from Config import llm, MAINEXTRACT_PROMPT, setup_logger
+from Config.Templates import Claim
+
+logger = setup_logger(__name__)
+
+parser = JsonOutputParser(pydantic_object=Claim)
+
+def extract_information(text: str|dict, template: str = MAINEXTRACT_PROMPT):
+    prompt = PromptTemplate(
+        template=template,
+        input_variables=["text"],
+        partial_variables={"format_instructions": parser.get_format_instructions()},
+    )
+
+    chain = prompt | llm | parser
+
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            response = chain.invoke({"text": text})
+
+            if isinstance(response, dict):
+                return response
+            elif isinstance(response, str):
+                json_match = re.search(r'\{.*\}', response, re.DOTALL)
+                if json_match:
+                    return json.loads(json_match.group())
+
+            raise OutputParserException("Invalid format")
+
+        except (OutputParserException, json.JSONDecodeError) as e:
+            logger(f"Попытка {attempt + 1} не удалась: {str(e)}")
+            if attempt == max_retries - 1:
+                raise
+            continue
+
+    print(None)
+    return None

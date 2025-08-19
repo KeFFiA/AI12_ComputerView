@@ -28,6 +28,6 @@ RUN python -m pip install --upgrade pip && \
     --extra-index-url https://download.pytorch.org/whl/cu121 && \
     pip install -r requirements.txt
 
-COPY ./Claims /app
+COPY .. /app
 
 CMD ["python", "main.py"]

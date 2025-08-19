@@ -12,7 +12,7 @@ from db.models import save_to_db
 from chains.templates.templates import Claim
 from chains.create_excel import create_excel
 
-INPUT_DIR = r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs_claims"
+INPUT_DIR = r"/Apps/Claims/data/input_pdfs"
 PROMPT_TEMPLATE_JSON = "Transform and map the provided JSON into the structure I need.\n{format_instructions}\n{text}\n\n **IMPORTANT: JSON SCHEMA AND VALID FIELD NAMES****YOU CAN ANALYZE AND SUGGEST THE FIELD MAPPING YOURSELF, BUT DON'T MAKE UP ANYTHING OR MAKE ANY COMMENTS**"
 
 def process_pdf(file_path):
@@ -61,12 +61,12 @@ def start():
 
 if __name__ == "__main__":
     # start()
-    process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs_claims\25-03-20 AGB.165439 Final Report-11560-80733383.pdf")
-    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs_claims\25-03-21 AGB.166646 Interim Report No. 1-11560-80778858.PDF")
-    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs_claims\20250304.SAS.REPORT4.10157988.HAR.HOWDEN.pdf")
-    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs_claims\20250321.SAS.REPORT 6.10170261.HOWDEN.pdf")
+    process_pdf(r"/Apps/Claims/data/input_pdfs\25-03-20 AGB.165439 Final Report-11560-80733383.pdf")
+    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs\25-03-21 AGB.166646 Interim Report No. 1-11560-80778858.PDF")
+    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs\20250304.SAS.REPORT4.10157988.HAR.HOWDEN.pdf")
+    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs\20250321.SAS.REPORT 6.10170261.HOWDEN.pdf")
     #
-    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs_claims\24-08-23 AGB.166536 Full and Final Insurance Release.pdf")
-    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs_claims\20250311.SAS.REPORT3.10222675.HOWDEN.pdf")
+    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs\24-08-23 AGB.166536 Full and Final Insurance Release.pdf")
+    # process_pdf(r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\data\input_pdfs\20250311.SAS.REPORT3.10222675.HOWDEN.pdf")
 
 
