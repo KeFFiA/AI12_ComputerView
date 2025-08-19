@@ -11,6 +11,9 @@ logger = setup_logger(__name__)
 PATH = Path(os.getenv("LISTEN_DIR", "data/input_pdfs"))
 NOPASSED_DIR = Path(os.getenv("LISTEN_DIR", "data/nopassed_pdfs"))
 
+PATH.mkdir(parents=True, exist_ok=True)
+NOPASSED_DIR.mkdir(parents=True, exist_ok=True)
+
 def findfiles():
     while True:
         pdf_files = sorted(glob.glob(os.path.join(PATH, "*.pdf")))

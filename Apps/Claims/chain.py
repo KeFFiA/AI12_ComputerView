@@ -1,5 +1,6 @@
 from pydantic import ValidationError
 
+from create_excel import create_report
 from Config import PROMPT_TEMPLATE_JSON, setup_logger
 from summarize_chain import compare_data
 from Config.Templates import Claim
@@ -15,6 +16,24 @@ def process_pdf(file_path):
         logger.info("Stage 2. Extract JSON from extracted raw text")
         extracted = extract_information(raw_text)
         logger.info("Stage 3. Valid extracted JSON")
+        try:
+            Claim(**extracted)
+            logger.info("Valid")
+        except ValidationError:
+            logger.error("Validation Error. Trying to validate")
+            extracted = extract_information(text=extracted, template=PROMPT_TEMPLATE_JSON)
+        logger.info("Stage 4. Compare JSON fields with DB")
+        compared = compare_data(extracted)
+        # enriched = enrich_cause(summarized)
+        # save_to_db(enriched)
+        # print(enriched)
+        filename = create_report(compared)
+        return True
+    except Exception as e:
+        # TODO: logger
+        return False
+
+
     #     extracted = {
     #     "report_type": "First Advice",
     #     "msn": None,
@@ -35,19 +54,3 @@ def process_pdf(file_path):
     #     "contact_phone": "+44 (0)788 580 3530",
     #     "contact_email": "gary.clift@mclarens.com"
     # }
-        try:
-            Claim(**extracted)
-            logger.info("Valid")
-        except ValidationError:
-            logger.error("Validation Error. Trying to validate")
-            extracted = extract_information(text=extracted, template=PROMPT_TEMPLATE_JSON)
-        logger.info("Stage 4. Compare JSON fields with DB")
-        compared = compare_data(extracted)
-        # enriched = enrich_cause(summarized)
-        # save_to_db(enriched)
-        # print(enriched)
-        # filename = create_excel(extracted)
-        return True
-    except Exception as e:
-        # TODO: logger
-        return False

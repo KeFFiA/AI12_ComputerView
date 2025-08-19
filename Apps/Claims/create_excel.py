@@ -1,15 +1,21 @@
 import json
-import pandas as pd
 from datetime import datetime
+from pathlib import Path
 
-FOLDER_PATH = r"D:\PycharmProjects\ASG_ComputerView\Apps\Claims\output\\"
+from Config import setup_logger
 
-def create_excel(data: dict):
-    df = pd.DataFrame([data])
-    filename = FOLDER_PATH + datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".xlsx"
-    df.to_excel(filename, index=False)
+FOLDER_PATH = Path("data/output")
+logger = setup_logger(__name__)
 
-    print(f"Файл сохранён: {filename}")
+FOLDER_PATH.mkdir(parents=True, exist_ok=True)
+
+def create_report(data: dict):
+
+    filename = FOLDER_PATH / f"{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.json"
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(json.dumps(data, indent=4))
+
+    logger.info(f"File saved: {filename}")
     return filename
 
 
@@ -34,4 +40,4 @@ if __name__ == "__main__":
     "contact_phone": "+44 7795666031",
     "contact_email": "sam.edwards@sedgwick.com"
 }
-    create_excel(data=test)
+    create_report(data=test)
