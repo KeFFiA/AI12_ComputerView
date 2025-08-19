@@ -9,7 +9,7 @@ from Utills.pdf_loader import load_pdf_text
 
 logger = setup_logger(__name__)
 
-def process_pdf(file_path):
+def process_pdf(file_path, filename):
     try:
         logger.info("Stage 1. Extract text from PDF")
         raw_text = load_pdf_text(file_path)
@@ -27,7 +27,7 @@ def process_pdf(file_path):
         # enriched = enrich_cause(summarized)
         # save_to_db(enriched)
         # print(enriched)
-        filename = create_report(compared)
+        filename = create_report(compared, filename)
         return True
     except Exception as e:
         # TODO: logger

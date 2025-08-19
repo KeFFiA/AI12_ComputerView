@@ -25,7 +25,7 @@ def findfiles():
                 filename = os.path.splitext(os.path.basename(pdf_file))[0]
                 logger.info(f"Processing file: {filename}")
 
-                result = process_pdf(pdf_file)
+                result = process_pdf(pdf_file, filename)
                 if result:
                     os.remove(pdf_file)
                 else:
