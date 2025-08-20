@@ -29,6 +29,7 @@ def process_pdf(file_path, filename):
         filename = create_report(compared, filename)
         return True
     except Exception as e:
+        logger.error(e)
         # TODO: logger
         return False
 

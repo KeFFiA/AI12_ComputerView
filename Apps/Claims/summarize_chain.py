@@ -76,11 +76,14 @@ def search_aircraft_and_msn(payload):
     else:
         return {}
 
-    msn_raw = (data.get("msn") or "").strip()
+    msn_raw = data.get("msn")
     reg_raw = (data.get("registration") or "").strip()
 
-    def parse_msn(s: str):
-        digits = re.sub(r"\D", "", s or "")
+    def parse_msn(s) -> int | None:
+        if s is None:
+            return None
+        s = str(s)
+        digits = re.sub(r"\D", "", s)
         try:
             return int(digits) if digits else None
         except ValueError:
