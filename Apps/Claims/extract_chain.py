@@ -36,10 +36,8 @@ def extract_information(text: str|dict, template: str = MAINEXTRACT_PROMPT):
             raise OutputParserException("Invalid format")
 
         except (OutputParserException, json.JSONDecodeError) as e:
-            logger(f"Попытка {attempt + 1} не удалась: {str(e)}")
+            logger.warning(f"Attempt {attempt + 1} failed: {str(e)}")
             if attempt == max_retries - 1:
                 raise
             continue
-
-    print(None)
     return None

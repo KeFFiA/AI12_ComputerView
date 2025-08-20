@@ -6,7 +6,9 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from langchain.agents import initialize_agent, Tool, AgentType
 
-from Config import llm, AIRCRAFT_PROMPT
+from Config import llm, AIRCRAFT_PROMPT, setup_logger
+
+logger = setup_logger(__name__)
 
 engine = create_engine(os.getenv("DB_URI_MAIN"))
 Session = sessionmaker(bind=engine)
@@ -100,21 +102,18 @@ def compare_data(data: str|dict):
             response = response['output']
             # TODO: Compare result
             if isinstance(response, dict):
-                print(response)
                 return response
             elif isinstance(response, str):
                 json_match = re.search(r'\{.*\}', response, re.DOTALL)
                 if json_match:
-                    print(json.loads(json_match.group()))
                     return json.loads(json_match.group())
 
         except json.JSONDecodeError as e:
-            print(f"Attempt {attempt + 1} failed: {str(e)}")
+            logger.warning(f"Attempt {attempt + 1} failed: {str(e)}")
             if attempt == max_retries - 1:
                 raise
             continue
 
-    print(None)
     return None
 
 

@@ -26,7 +26,6 @@ def process_pdf(file_path, filename):
         compared = compare_data(extracted)
         # enriched = enrich_cause(summarized)
         # save_to_db(enriched)
-        # print(enriched)
         filename = create_report(compared, filename)
         return True
     except Exception as e:
