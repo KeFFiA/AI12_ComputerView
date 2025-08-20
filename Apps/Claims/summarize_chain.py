@@ -65,7 +65,6 @@ def search_aircraft_and_msn(payload):
     If nothing is found, returns the original input unchanged.
     """
 
-    # 1) распарсить вход
     if isinstance(payload, str):
         try:
             data = json.loads(payload)
