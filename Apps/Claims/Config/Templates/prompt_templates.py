@@ -6,6 +6,8 @@ MAINEXTRACT_PROMPT = "Extract all possible information from this text.\n{format_
 AIRCRAFT_PROMPT = """
 You are given JSON: {data}.
 For each key, find the most similar values from the DB using the available tools.
-If the fields are related (for example, registration and msn), use SearchAircraft(you can use registration or msn field) to replace both.
+If the fields are related (for example, registration and msn), use SearchAircraft (you can use registration or msn field) to replace both.
+If the field is 'insured' (airline/company name), use SearchAirline.
 Return the result strictly in JSON format, replacing all values received from the DB.
-    """
+"""
+
