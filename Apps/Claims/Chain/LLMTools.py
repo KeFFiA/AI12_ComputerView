@@ -1,18 +1,17 @@
 import json
-import os
 import re
 
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import text
 from langchain.agents import initialize_agent, Tool, AgentType
 from rapidfuzz import process
+from langchain.tools import StructuredTool
 
-from Config import llm, AIRCRAFT_PROMPT, setup_logger
 
-logger = setup_logger(__name__)
+from Config import llm, AIRCRAFT_PROMPT
+from Config import llm_tools as logger
+from Database import DatabaseClient
 
-engine = create_engine(os.getenv("DB_URI_MAIN"))
-Session = sessionmaker(bind=engine)
+client = DatabaseClient()
 
 LEGAL_SUFFIXES = ["LTD", "OU", "SIA", "INC", "LLC", "BV", "GMBH", "AS"]
 
@@ -30,11 +29,11 @@ def split_airline_variants(name: str) -> list[str]:
     return [normalize_airline_name(p) for p in parts]
 
 
-def search_airline(query: str):
+async def search_airline(query: str):
     variants = split_airline_variants(query)
-
-    with Session() as session:
-        airlines = [row[0] for row in session.execute(text("SELECT name FROM airlines")).fetchall()]
+    async with client.session("main") as session:
+        result = await session.execute(text("SELECT name FROM airlines"))
+        airlines = [row[0] for row in result.fetchall()]
 
     for v in variants:
         for a in airlines:
@@ -45,19 +44,19 @@ def search_airline(query: str):
     return best_match if score > 70 else query
 
 
-def search_single_column(table_name, column_name, query):
-    with Session() as session:
+async def search_single_column(table_name, column_name, query):
+    async with client.session("main") as session:
         sql = text(f"""
             SELECT {column_name}
             FROM {table_name}
             WHERE {column_name} ILIKE :q
             LIMIT 5
         """)
-        result = session.execute(sql, {"q": f"%{query}%"}).fetchall()
-    return [row[0] for row in result]
+        result = await session.execute(sql, {"q": f"%{query}%"})
+        return [row[0] for row in result.fetchall()]
 
 
-def search_aircraft_and_msn(payload):
+async def search_aircraft_and_msn(payload):
     """
     Accepts JSON/dict with optional keys: 'msn', 'registration'.
     Tries exact match by MSN first (if numeric), then exact match by registration (case-insensitive),
@@ -89,10 +88,10 @@ def search_aircraft_and_msn(payload):
             return None
 
     result = None
-    with Session() as session:
+    async with client.session("main") as session:
         msn_num = parse_msn(msn_raw)
         if msn_num is not None:
-            result = session.execute(
+            result = await session.execute(
                 text("""
                     SELECT msn, reg_num, aircraft_type
                     FROM registrations
@@ -100,7 +99,8 @@ def search_aircraft_and_msn(payload):
                     LIMIT 1
                 """),
                 {"msn": msn_num}
-            ).fetchone()
+            )
+            result = result.fetchone()
 
         if result is None and reg_raw:
             result = session.execute(
@@ -136,19 +136,19 @@ def search_aircraft_and_msn(payload):
 
 
 tools = [
-    # Tool(
+    # StructuredTool.from_function(
     #     name="SearchLocation",
     #     func=lambda q: search_single_column("locations", "name", q),
     #     description=""
     # ),
-    Tool(
+    StructuredTool.from_function(
         name="SearchAirline",
-        func=search_airline,
+        coroutine=search_airline,
         description="Find the most suitable Airlines. If nothing is found, returns the original JSON unchanged."
     ),
-    Tool(
+    StructuredTool.from_function(
         name="SearchAircraft",
-        func=search_aircraft_and_msn,
+        coroutine=search_aircraft_and_msn,
         description="""Find an aircraft by MSN or registration. 
         Accepts JSON with optional keys 'registration' and 'msn'. 
         Tries exact MSN first (numeric), then exact registration (case-insensitive), 
@@ -165,11 +165,11 @@ agent = initialize_agent(
 )
 
 
-def compare_data(data: str | dict):
+async def compare_data(data: str | dict):
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            raw = agent.invoke({"input": AIRCRAFT_PROMPT.format(data=data)})
+            raw = await agent.invoke({"input": AIRCRAFT_PROMPT.format(data=data)})
             response = raw.get("output") if isinstance(raw, dict) else raw
             if isinstance(response, dict):
                 return response

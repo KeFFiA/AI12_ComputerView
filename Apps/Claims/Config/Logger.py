@@ -1,24 +1,11 @@
-import logging
-from logging.handlers import RotatingFileHandler
 import datetime
-import os
 import glob
+import logging
+import os
 import zipfile
-from pathlib import Path
+from logging.handlers import RotatingFileHandler
 
-
-def get_project_root() -> Path:
-    current_file = Path(__file__).absolute()
-
-    for parent in current_file.parents:
-        if (parent / '.git').exists() or (parent / 'requirements.txt').exists():
-            return parent
-
-    return current_file.parents[2]
-
-
-LOGS_DIR = get_project_root() / 'Logs'
-LOGS_DIR.mkdir(exist_ok=True, parents=True)
+from .config import LOGS_DIR, DEV_MODE
 
 
 class CustomLogHandler(RotatingFileHandler):
@@ -62,29 +49,43 @@ class CustomLogHandler(RotatingFileHandler):
         while len(zip_files) > self.backup_count:
             os.remove(zip_files.pop())
 
-
-def setup_logger(name: str = __file__) -> logging.Logger:
-    log_format = (
-        '[%(levelname)s] %(asctime)s|%(filename)s(%(funcName)s)-%(lineno)d: %(message)s'
+log_format = (
+        '%(levelname)s:     [%(name)s] %(asctime)s|%(filename)s-%(lineno)d: %(message)s'
     )
+
+def setup_logger(name: str, log_format: str = log_format) -> logging.Logger:
     formatter = logging.Formatter(log_format)
 
     logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+
+    if DEV_MODE:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
 
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    log_file = LOGS_DIR / f"{datetime.datetime.now().strftime('%Y-%m-%d')}.log"
+    log_file = LOGS_DIR / f"LOG_{datetime.datetime.now().strftime('%Y-%m-%d')}.log"
     file_handler = CustomLogHandler(
         filename=log_file,
-        maxBytes=100 * 1024 * 1024,
+        maxBytes=10 * 1024 * 1024,
         backupCount=5
     )
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
 
+    logger_blacklist = [
+        "httpcore.http2",
+        "hpack.hpack",
+        "hpack.table",
+        "asyncio",
+        "httpcore.connection",
+        "httpx",
+    ]
+
+    for module in logger_blacklist:
+        logging.getLogger(module).setLevel(logging.ERROR)
+
     return logger
-
-
