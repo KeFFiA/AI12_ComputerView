@@ -5,6 +5,7 @@ from pathlib import Path
 
 from Config import FILES_PATH, NOPASSED_PATH
 from Config import file_processor as logger
+from ..Utils import remove_from_queue
 
 from .ProcessPDF import main_chain
 
@@ -46,3 +47,11 @@ async def start_processor_loop():
 
         logger.debug("Waiting for new files")
         await asyncio.sleep(5)
+
+
+async def remover_loop():
+    client = DatabaseClient()
+    while True:
+        async with client.session("service") as session:
+            result = await remove_from_queue(session)
+
