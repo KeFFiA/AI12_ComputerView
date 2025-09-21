@@ -2,7 +2,7 @@ from sqlalchemy import select, func, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-from ..Database import PDF_Queue
+from Database import PDF_Queue
 
 
 async def add_to_queue(session: AsyncSession, filename: str, user_email: str, _type: str):

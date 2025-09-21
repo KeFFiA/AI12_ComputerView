@@ -12,20 +12,25 @@ from Database import DatabaseClient, PDF_Queue
 from Schemas import QueueStatusEnum
 
 
-async def main_chain(file_path: Path, filename: str, fileid: int):
-    client = DatabaseClient()
+async def main_chain(client, file_path: Path, filename: str, fileid: int):
     async with client.session("service") as session:
         row = await session.get(PDF_Queue, fileid)
         try:
             row.status_description = "Stage 1. Extract text from PDF"
+            row.progress_total = 6
+            row.progress_done = 1
+            row.progress = row.progress_done / row.progress_total * 100
             await session.commit()
             logger.info("Stage 1. Extract text from PDF")
-            raw_text = await extract_pdf_text(file_path, fileid)
+            raw_text = await extract_pdf_text(client, file_path, fileid)
 
-            row.status_description = "Stage 2. Extract JSON from extracted raw text"
+            row.status_description = "Stage 2. Extract JSON from extracted raw text. Waiting for LLM answer..."
             await session.commit()
-            logger.info("Stage 2. Extract JSON from extracted raw text")
-            extracted = await extract_information(text=raw_text, fileid=fileid)
+            logger.info("Stage 2. Extract JSON from extracted raw text. Waiting for LLM answer...")
+            extracted = await extract_information(client, text=raw_text, fileid=fileid)
+
+            row.progress_done += 1
+            row.progress = row.progress_done / row.progress_total * 100
 
             row.status_description = "Stage 3. Validate extracted JSON"
             await session.commit()
@@ -33,14 +38,20 @@ async def main_chain(file_path: Path, filename: str, fileid: int):
             try:
                 Claim(**extracted)
                 row.status_description = "JSON values validated"
+                row.progress_done += 1
+                row.progress = row.progress_done / row.progress_total * 100
                 await session.commit()
                 logger.info("JSON values validated")
             except ValidationError:
                 row.status_description = "Validation Error. Trying to revalidate"
                 await session.commit()
+                row.progress_total += 1
+                row.progress = row.progress_done / row.progress_total * 100
                 logger.error("Validation Error. Trying to revalidate")
-                extracted = extract_information(fileid=fileid, text=extracted, template=PROMPT_TEMPLATE_JSON)
+                extracted = await extract_information(client, fileid=fileid, text=extracted, template=PROMPT_TEMPLATE_JSON)
 
+            row.progress_done += 1
+            row.progress = row.progress_done / row.progress_total * 100
             row.status_description = "Stage 4. Compare JSON fields with DB"
             await session.commit()
             logger.info("Stage 4. Compare JSON fields with DB")
@@ -48,14 +59,16 @@ async def main_chain(file_path: Path, filename: str, fileid: int):
 
             # enriched = enrich_cause(summarized)
             # save_to_db(enriched)
-
+            row.progress_done += 1
+            row.progress = row.progress_done / row.progress_total * 100
             row.status_description = "Stage 5. Create report"
             await session.commit()
             logger.info("Stage 5. Create report")
-            filename = create_report(compared, filename)
+            filename = await create_report(compared, filename)
 
             row.status_description = "Done"
             row.status = QueueStatusEnum.DONE.value
+            row.progress = 100
             await session.commit()
             logger.info(f"Done. Created report {filename}")
 

@@ -1,2 +1,2 @@
 from .prompt_templates import *
-from .templates import Claim
+from .templates import *

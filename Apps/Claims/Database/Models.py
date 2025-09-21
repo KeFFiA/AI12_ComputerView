@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer
+from sqlalchemy import String, Integer, Float
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .config import Base
@@ -11,4 +11,8 @@ class PDF_Queue(Base):
     status: Mapped[str] = mapped_column(String, nullable=False, default="Queued")
     status_description: Mapped[str] = mapped_column(String, nullable=True)
     user_email: Mapped[str] = mapped_column(String, nullable=False)
+    progress: Mapped[float] = mapped_column(Float, nullable=False, default=0)
+    progress_total: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    progress_done: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
 

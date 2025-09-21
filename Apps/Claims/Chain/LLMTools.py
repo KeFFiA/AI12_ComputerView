@@ -2,7 +2,7 @@ import json
 import re
 
 from sqlalchemy import text
-from langchain.agents import initialize_agent, Tool, AgentType
+from langchain.agents import initialize_agent, AgentType
 from rapidfuzz import process
 from langchain.tools import StructuredTool
 
@@ -16,7 +16,7 @@ client = DatabaseClient()
 LEGAL_SUFFIXES = ["LTD", "OU", "SIA", "INC", "LLC", "BV", "GMBH", "AS"]
 
 
-def normalize_airline_name(name: str) -> str:
+async def normalize_airline_name(name: str) -> str:
     pattern = r"\b(" + "|".join(LEGAL_SUFFIXES) + r")\b"
     name = re.sub(pattern, "", name, flags=re.IGNORECASE)
     name = re.sub(r"\band/or\b", " ", name, flags=re.IGNORECASE)
@@ -24,13 +24,16 @@ def normalize_airline_name(name: str) -> str:
     return name
 
 
-def split_airline_variants(name: str) -> list[str]:
+async def split_airline_variants(name: str) -> list[str]:
     parts = re.split(r"\s+and/or\s+", name, flags=re.IGNORECASE)
-    return [normalize_airline_name(p) for p in parts]
+    return [await normalize_airline_name(p) for p in parts]
 
 
-async def search_airline(query: str):
-    variants = split_airline_variants(query)
+async def search_airline(name: str):
+    """
+    Accepts name of airline as argument.
+    """
+    variants = await split_airline_variants(name)
     async with client.session("main") as session:
         result = await session.execute(text("SELECT name FROM airlines"))
         airlines = [row[0] for row in result.fetchall()]
@@ -41,10 +44,13 @@ async def search_airline(query: str):
                 return a
 
     best_match, score, _ = process.extractOne(" ".join(variants), airlines)
-    return best_match if score > 70 else query
+    return best_match if score > 70 else name
 
 
 async def search_single_column(table_name, column_name, query):
+    """
+    Accept table_name, column_name, and query as arguments
+    """
     async with client.session("main") as session:
         sql = text(f"""
             SELECT {column_name}
@@ -77,7 +83,7 @@ async def search_aircraft_and_msn(payload):
     msn_raw = data.get("msn")
     reg_raw = (data.get("registration") or "").strip()
 
-    def parse_msn(s) -> int | None:
+    async def parse_msn(s) -> int | None:
         if s is None:
             return None
         s = str(s)
@@ -89,9 +95,9 @@ async def search_aircraft_and_msn(payload):
 
     result = None
     async with client.session("main") as session:
-        msn_num = parse_msn(msn_raw)
+        msn_num = await parse_msn(msn_raw)
         if msn_num is not None:
-            result = await session.execute(
+            row = await session.execute(
                 text("""
                     SELECT msn, reg_num, aircraft_type
                     FROM registrations
@@ -100,10 +106,10 @@ async def search_aircraft_and_msn(payload):
                 """),
                 {"msn": msn_num}
             )
-            result = result.fetchone()
+            result = row.fetchone()
 
         if result is None and reg_raw:
-            result = session.execute(
+            row = await session.execute(
                 text("""
                     SELECT msn, reg_num, aircraft_type
                     FROM registrations
@@ -111,10 +117,11 @@ async def search_aircraft_and_msn(payload):
                     LIMIT 1
                 """),
                 {"reg": reg_raw}
-            ).fetchone()
+            )
+            result = row.fetchone()
 
         if result is None and reg_raw:
-            result = session.execute(
+            row = await session.execute(
                 text("""
                     SELECT msn, reg_num, aircraft_type
                     FROM registrations
@@ -123,7 +130,8 @@ async def search_aircraft_and_msn(payload):
                     LIMIT 1
                 """),
                 {"reg": reg_raw}
-            ).fetchone()
+            )
+            result = row.fetchone()
 
     if result is None:
         return data
@@ -149,17 +157,17 @@ tools = [
     StructuredTool.from_function(
         name="SearchAircraft",
         coroutine=search_aircraft_and_msn,
-        description="""Find an aircraft by MSN or registration. 
-        Accepts JSON with optional keys 'registration' and 'msn'. 
-        Tries exact MSN first (numeric), then exact registration (case-insensitive), 
-        then sanitized equality (ignoring non-alnum). 
+        description="""Find an aircraft by MSN or registration.
+        Accepts JSON with optional keys 'registration' and 'msn'.
+        Tries exact MSN first (numeric), then exact registration (case-insensitive),
+        then sanitized equality (ignoring non-alnum).
         If nothing is found, returns the original JSON unchanged."""
     )
 ]
 
 agent = initialize_agent(
-    tools,
-    llm,
+    tools=tools,
+    llm=llm,
     agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
     verbose=True
 )
@@ -169,7 +177,7 @@ async def compare_data(data: str | dict):
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            raw = await agent.invoke({"input": AIRCRAFT_PROMPT.format(data=data)})
+            raw = await agent.ainvoke({"input": AIRCRAFT_PROMPT.format(data=data)})
             response = raw.get("output") if isinstance(raw, dict) else raw
             if isinstance(response, dict):
                 return response
@@ -188,7 +196,8 @@ async def compare_data(data: str | dict):
 
 
 if __name__ == "__main__":
-    print(compare_data(data=
+    import asyncio
+    print(asyncio.run(compare_data(data=
         {
         "report_type": "Full and Final",
         "msn": 5074,
@@ -229,4 +238,4 @@ if __name__ == "__main__":
     #     "contact_phone": "+44 (0)788 580 3530",
     #     "contact_email": "gary.clift@mclarens.com"
     # }
-    ))
+    )))

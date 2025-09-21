@@ -5,7 +5,7 @@ from Config import OUTPUT_CLAIMS_PATH
 from Config import file_processor as logger
 
 
-def create_report(data: dict, filename: str):
+async def create_report(data: dict, filename: str):
     data["filename"] = filename
     filename = OUTPUT_CLAIMS_PATH / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
     with open(filename, "w", encoding="utf-8") as file:

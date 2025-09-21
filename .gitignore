@@ -11,3 +11,5 @@
 /Apps/Claims/Logs/
 /Apps/Claims/output/
 /Apps/Claims/data/
+/.env.dev
+/.env

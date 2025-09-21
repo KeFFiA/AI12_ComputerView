@@ -19,11 +19,16 @@ def get_project_root() -> Path:
 
     return current_file.parents[2]
 
-FILES_PATH: Path = get_project_root() / "data/input_files"
-OUTPUT_CLAIMS_PATH: Path = get_project_root() / "data/output_claims"
-NOPASSED_PATH: Path = get_project_root() / "data/nopassed"
-RESPONSES_PATH: Path = get_project_root() / "data/responses"
 
+# FILES_PATH: Path = get_project_root() / "data/input_files"
+# OUTPUT_CLAIMS_PATH: Path = get_project_root() / "data/output_claims"
+# NOPASSED_PATH: Path = get_project_root() / "data/nopassed"
+# RESPONSES_PATH: Path = get_project_root() / "data/responses"
+
+FILES_PATH: Path = Path(r"D:\FTPFolder\input_files")
+OUTPUT_CLAIMS_PATH: Path = Path(r"D:\FTPFolder\output_claims")
+NOPASSED_PATH: Path = Path(r"D:\FTPFolder\nopassed")
+RESPONSES_PATH: Path = Path(r"D:\FTPFolder\responses")
 
 FILES_PATH.mkdir(parents=True, exist_ok=True)
 OUTPUT_CLAIMS_PATH.mkdir(parents=True, exist_ok=True)
@@ -40,6 +45,7 @@ else:
 PATH = find_dotenv(filename=ENV_PATH)
 
 load_dotenv(dotenv_path=PATH)
+
 
 # DATABASE
 
@@ -81,6 +87,7 @@ class DBSettings(BaseSettings):
     # def get_reddis_url(self):
     #     return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}"
 
+
 #  LOGS
 
 LOGS_DIR = get_project_root() / 'Logs'
@@ -97,5 +104,3 @@ llm = langchain_ollama.OllamaLLM(
     base_url=LLM_BASE_URL,
     temperature=LLM_TEMPERATURE
 )
-
-

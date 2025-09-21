@@ -13,7 +13,7 @@ from Config.Templates import Claim
 
 parser = JsonOutputParser(pydantic_object=Claim)
 
-async def extract_information(fileid: int, text: str|dict, template: str = MAINEXTRACT_PROMPT):
+async def extract_information(client, fileid: int, text: str|dict, template: str = MAINEXTRACT_PROMPT):
     prompt = PromptTemplate(
         template=template,
         input_variables=["text"],
@@ -37,7 +37,6 @@ async def extract_information(fileid: int, text: str|dict, template: str = MAINE
             raise OutputParserException("Invalid format")
 
         except (OutputParserException, json.JSONDecodeError) as e:
-            client = DatabaseClient()
             async with client.session("service") as session:
                 row = await session.get(PDF_Queue, fileid)
                 row.status_description = f"Attempt {attempt + 1} failed: {str(e)}"

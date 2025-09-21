@@ -5,7 +5,7 @@ from pathlib import Path
 
 from Config import FILES_PATH, NOPASSED_PATH
 from Config import file_processor as logger
-from ..Utils import remove_from_queue
+from Utils import remove_from_queue
 
 from .ProcessPDF import main_chain
 
@@ -14,8 +14,8 @@ from Schemas import QueueStatusEnum
 from sqlalchemy import select
 
 
-async def start_processor_loop():
-    client = DatabaseClient()
+async def start_processor_loop(client):
+    logger.info("Starting main loop")
     while True:
         async with client.session("service") as session:
             result = await session.execute(
@@ -32,7 +32,7 @@ async def start_processor_loop():
                     row.status = QueueStatusEnum.PROCESSING.value
                     await session.commit()
                     logger.info(f"Processing file: {row.filename}")
-                    process_result = await main_chain(path, row.filename, row.id)
+                    process_result = await main_chain(client, path, row.filename, row.id)
                     if process_result:
                         row.status = QueueStatusEnum.DONE.value
                         await session.commit()
@@ -49,9 +49,13 @@ async def start_processor_loop():
         await asyncio.sleep(5)
 
 
-async def remover_loop():
-    client = DatabaseClient()
+async def remover_loop(client):
+    logger.info("Starting remover loop")
     while True:
         async with client.session("service") as session:
             result = await remove_from_queue(session)
+            if result != 0:
+                logger.info(f"Removed {result} records")
+        await asyncio.sleep(1800)
+
 

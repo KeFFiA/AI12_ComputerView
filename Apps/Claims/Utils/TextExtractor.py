@@ -8,8 +8,7 @@ from Database import DatabaseClient, PDF_Queue
 from Schemas import QueueStatusEnum
 
 
-async def extract_pdf_text(path: str, fileid: int) -> str:
-    client = DatabaseClient()
+async def extract_pdf_text(client, path: str, fileid: int) -> str:
     async with client.session("service") as session:
         row = await session.get(PDF_Queue, fileid)
         if not row:
@@ -26,40 +25,40 @@ async def extract_pdf_text(path: str, fileid: int) -> str:
 
             if len(text.strip()) > 50:
                 logger.info(f"Extraction completed. Extracted {len(reader.pages)} pages")
+                row.progress_done += 1
+                row.progress = row.progress_done / row.progress_total * 100
                 row.status_description = f"Extraction completed. Extracted {len(reader.pages)} pages"
                 await session.commit()
                 return text
 
             raise ValueError("No text extracted from PDF, switching to OCR")
 
+
         except Exception:
-            logger.exception("Extract PDF text failed")
-            row.status_description = "Extract PDF text failed. Switching to OCR..."
-            row.status = QueueStatusEnum.FAILED.value
+            images = convert_from_path(path, dpi=200)
+            total_pages = len(images)
+
+            row.progress_total += total_pages
+            row.status_description = "Using OCR..."
             await session.commit()
 
-        # OCR fallback
-        logger.info("Using OCR...")
-        row.status_description = "Using OCR..."
-        await session.commit()
+            text_parts = []
 
-        images = convert_from_path(path, dpi=200)
-        total_pages = len(images)
-        text_parts = []
+            for i, img in enumerate(images, start=1):
+                page_text = pytesseract.image_to_string(img)
+                text_parts.append(page_text)
 
-        for i, img in enumerate(images, start=1):
-            page_text = pytesseract.image_to_string(img)
-            text_parts.append(page_text)
+                row.progress_done += 1
+                row.progress = row.progress_done / row.progress_total * 100
+                row.status_description = f"OCR in progress: page {i}/{total_pages}"
+                await session.commit()
 
-            row.status_description = f"OCR in progress: page {i}/{total_pages}"
+            final_text = ''.join(text_parts)
+
+            row.progress_done += 1
+            row.progress = row.progress_done / row.progress_total * 100
+            row.status_description = f"OCR extraction completed. {total_pages} pages processed."
             await session.commit()
-            logger.info(f"OCR page {i}/{total_pages}")
 
-        final_text = ''.join(text_parts)
-
-        row.status_description = f"OCR extraction completed. {total_pages} pages processed."
-        await session.commit()
-
-        return final_text
-
+            return final_text
 

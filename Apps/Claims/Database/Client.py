@@ -21,6 +21,8 @@ class DatabaseClient:
                 pool_size=10,
                 max_overflow=20,
                 future=True,
+                pool_pre_ping=True,
+                pool_recycle=300,
             )
             self._engines[db_name] = engine
             self._session_factories[db_name] = async_sessionmaker(
@@ -43,3 +45,7 @@ class DatabaseClient:
             except Exception:
                 await session.rollback()
                 raise
+
+    async def dispose(self):
+        for engine in self._engines.values():
+            await engine.dispose()

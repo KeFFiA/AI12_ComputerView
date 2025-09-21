@@ -93,6 +93,7 @@ services:
     restart: unless-stopped
     networks:
       - ollama-net
+      - my-net
     deploy:
       resources:
         reservations:
@@ -106,3 +107,5 @@ networks:
     name: ollama-net
     driver: bridge
     attachable: true
+  my-net:
+    external: true
