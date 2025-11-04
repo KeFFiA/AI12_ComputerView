@@ -2,7 +2,7 @@ services:
   medical_parser:
     image: asg_computerview_medical_parser:latest
     build:
-      context: Apps/Medical
+      context: src/Medical
       dockerfile: Dockerfile
     container_name: medical_pdf_parser
     depends_on:
@@ -25,8 +25,8 @@ services:
   claims_parser:
     image: asg_computerview_claims_parser:latest
     build:
-      context: Apps/Claims
-      dockerfile: Dockerfile
+      context: src/Claims
+      dockerfile: src/Dockerfile
     container_name: claims_pdf_parser
     depends_on:
       - llama3
