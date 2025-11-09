@@ -3,8 +3,8 @@ services:
     image: aixii_data_parser:latest
     build:
       context: src
-      dockerfile: Dockerfile
-    container_name: ./data_parser
+      dockerfile: ./Dockerfile
+    container_name: data_parser
     depends_on:
       - llama3
     volumes:
