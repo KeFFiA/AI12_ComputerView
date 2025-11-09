@@ -20,4 +20,4 @@ langchain-core==0.3.72
 pydantic-settings==2.11.0
 pgvector==0.4.1
 inflect==7.5.0
-numpy==2.3.3
+numpy==2.2.6
