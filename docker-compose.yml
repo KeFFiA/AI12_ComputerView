@@ -4,7 +4,7 @@ services:
     build:
       context: src
       dockerfile: Dockerfile
-    container_name: data_parser
+    container_name: ./data_parser
     depends_on:
       - llama3
     volumes:
