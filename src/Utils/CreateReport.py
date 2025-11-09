@@ -1,18 +1,33 @@
 import json
 from datetime import datetime
+from Database.Models import Lease_Agreements
+from Schemas import LeaseAgreementData
+from pydantic import BaseModel
+from Config import OUTPUT_CLAIMS_PATH, file_processor as logger
+from Utils import match_schema
 
-from Config import OUTPUT_CLAIMS_PATH
-from Config import file_processor as logger
-
-
-async def create_report(data: dict, filename: str):
+async def create_report(client, data: dict, filename: str):
     data["filename"] = filename
     filename = OUTPUT_CLAIMS_PATH / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
     with open(filename, "w", encoding="utf-8") as file:
         file.write(json.dumps(data, indent=4))
 
+    schema = match_schema(data, LeaseAgreementData)[0]
+    parsed = schema.model_validate_json(**data)
+
+    async with client.session("main") as session:
+        if schema == LeaseAgreementData:
+            row = Lease_Agreements(
+                **parsed
+            )
+        else:
+            parsed = None
+        session.add(row)
+
+
     logger.info(f"File saved: {filename}")
-    return filename
+
+    return filename, parsed
 
 
 if __name__ == "__main__":

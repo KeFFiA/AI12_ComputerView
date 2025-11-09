@@ -67,12 +67,12 @@ async def extract_pdf_text(
         row = await session.get(PDF_Queue, fileid)
         if not row:
             logger.error(f"Row with id={fileid} not found in DB")
-            # return ""
+            return ""
 
         try:
             logger.info("Trying to extract PDF text...")
-            # row.status_description = "Trying to extract PDF text"
-            # await session.commit()
+            row.status_description = "Trying to extract PDF text"
+            await session.commit()
 
             reader = PdfReader(path)
             total_pages = len(reader.pages)
@@ -86,10 +86,10 @@ async def extract_pdf_text(
 
             if len(text.strip()) > 50:
                 logger.info(f"Text extraction completed. Extracted {len(pages)} pages.")
-                # row.progress_done += len(pages)
-                # row.progress = row.progress_done / row.progress_total * 100
-                # row.status_description = f"Extraction completed. Extracted {len(pages)} pages"
-                # await session.commit()
+                row.progress_done += len(pages)
+                row.progress = row.progress_done / row.progress_total * 100
+                row.status_description = f"Extraction completed. Extracted {len(pages)} pages"
+                await session.commit()
                 return text
 
             raise ValueError("No text extracted from PDF, switching to OCR")

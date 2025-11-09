@@ -1,42 +1,18 @@
 services:
-  medical_parser:
-    image: asg_computerview_medical_parser:latest
+  data_parser:
+    image: aixii_data_parser:latest
     build:
-      context: src/Medical
+      context: src
       dockerfile: Dockerfile
-    container_name: medical_pdf_parser
+    container_name: data_parser
     depends_on:
       - llama3
     volumes:
-      - ./data:/app/data
-      - ./output:/app/output
-      - ./transformers_cache:/app/.cache
+      - /api_data:/app/api_data
     environment:
       - PYTHONUNBUFFERED=1
-    restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-
-  claims_parser:
-    image: asg_computerview_claims_parser:latest
-    build:
-      context: src/Claims
-      dockerfile: src/Dockerfile
-    container_name: claims_pdf_parser
-    depends_on:
-      - llama3
-    volumes:
-      - ./data:/app/data
-      - ./output:/app/output
-      - ./transformers_cache:/app/.cache
-    environment:
-      - PYTHONUNBUFFERED=1
-      - DB_URI_MAIN=postgresql+psycopg2://asgdevelop:asgdev1234567890@193.239.161.50/ai12_main
+    env_file:
+      - ./PDF_LLM_Parser/.env
     restart: unless-stopped
     deploy:
       resources:

@@ -56,6 +56,6 @@ async def remover_loop(client):
             result = await remove_from_queue(session)
             if result != 0:
                 logger.info(f"Removed {result} records")
-        await asyncio.sleep(1800)
+        await asyncio.sleep(10800)
 
 

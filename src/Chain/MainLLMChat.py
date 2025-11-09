@@ -21,18 +21,18 @@ async def main_request(client, text: str | None = None,
         format = DefaultMessageSchema
     if request_type == AnalysTypeEnum.FILE_TYPE:
         async with client.session("service") as session:
-            # row: PDF_Queue = await session.get(PDF_Queue, fileid)
+            row: PDF_Queue = await session.get(PDF_Queue, fileid)
             text = await extract_pdf_text(client, path, fileid, pages_to_extract=[1])
             llm_text = FILE_TYPE_PROMPT.format(text=text)
             format = FileTypeSchema
-#             row.status_description = "Waiting for answer..."
+            row.status_description = "Waiting for answer..."
     if request_type == AnalysTypeEnum.PAGE_NAVIGATION:
         async with client.session("service") as session:
-#             row = await session.get(PDF_Queue, fileid)
+            row = await session.get(PDF_Queue, fileid)
             text = await extract_pdf_text(client, path, fileid, pages_to_extract="2-6")
             llm_text = PAGE_NAVIGATION_PROMPT.format(text=text)
             format = PageNavigationSchema
-#             row.status_description = "Waiting for answer..."
+            row.status_description = "Waiting for answer..."
 
 
     response = await llm_client.chat(messages=[{
