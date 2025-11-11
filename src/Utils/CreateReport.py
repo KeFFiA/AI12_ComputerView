@@ -4,7 +4,7 @@ from Database.Models import Lease_Agreements
 from Schemas import LeaseAgreementData
 from pydantic import BaseModel
 from Config import OUTPUT_CLAIMS_PATH, file_processor as logger
-from Utils import match_schema
+from .utils import match_schema
 
 async def create_report(client, data: dict, filename: str):
     data["filename"] = filename
