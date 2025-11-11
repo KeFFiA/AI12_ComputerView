@@ -1,8 +1,6 @@
 from datetime import datetime
 from pathlib import Path
 
-from pydantic import ValidationError
-
 from Config import chain as logger
 from .MainLLMChat import main_request
 from .ProcessorWithEmbeddings import processor_with_embeddings

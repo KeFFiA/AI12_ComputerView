@@ -7,8 +7,7 @@ from rapidfuzz import process
 from langchain.tools import StructuredTool
 
 
-from Config import llm, AIRCRAFT_PROMPT
-from Config import llm_tools as logger
+from Config import LLM_MODEL, AIRCRAFT_PROMPT, llm_tools as logger
 from Database import DatabaseClient
 
 client = DatabaseClient()
