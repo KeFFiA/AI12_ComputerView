@@ -6,13 +6,13 @@ from pydantic import ValidationError
 from Config import PROMPT_TEMPLATE_JSON
 from Config import chain as logger
 from Config.Templates import Claim
-from MainLLMChat import main_request
+from .MainLLMChat import main_request
 from ProcessorWithEmbeddings import processor_with_embeddings
 from Utils import extract_pdf_text, create_report, process_document, get_number_of_pages
 from Database import PDF_Queue, DatabaseClient
 from Schemas import QueueStatusEnum, AnalysTypeEnum, DocumentMetadata
 from Schemas.Enums import FileTypeEnum
-from Utils.ModelToJSON import dump_to_json
+from ModelToJSON import dump_to_json
 
 
 async def main_chain(client, file_path: Path, filename: str, fileid: int):
