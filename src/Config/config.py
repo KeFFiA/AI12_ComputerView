@@ -34,10 +34,10 @@ if DEV_MODE:
     RESPONSES_PATH: Path = Path(r"D:\FTPFolder\responses")
 else:
     ENV_PATH: str = os.getenv("ENV_PATH") or ".env"
-    FILES_PATH: Path = get_project_root() / "data/input_files"
-    OUTPUT_CLAIMS_PATH: Path = get_project_root() / "data/output_claims"
-    NOPASSED_PATH: Path = get_project_root() / "data/nopassed"
-    RESPONSES_PATH: Path = get_project_root() / "data/responses"
+    FILES_PATH: Path = get_project_root() / "api_data/input_files"
+    OUTPUT_CLAIMS_PATH: Path = get_project_root() / "api_data/output_claims"
+    NOPASSED_PATH: Path = get_project_root() / "api_data/nopassed"
+    RESPONSES_PATH: Path = get_project_root() / "api_data/responses"
 
 FILES_PATH.mkdir(parents=True, exist_ok=True)
 OUTPUT_CLAIMS_PATH.mkdir(parents=True, exist_ok=True)
