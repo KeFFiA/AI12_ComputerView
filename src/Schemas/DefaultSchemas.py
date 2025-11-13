@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 
 class DocumentMetadata(BaseModel):
@@ -11,6 +11,12 @@ class DocumentMetadata(BaseModel):
     size: Optional[int] = Field(..., description="Size of file")
 
 
+class JsonFileSchema(BaseModel):
+    user_email: Optional[EmailStr] = None
+    filename: str
+    type: str
+
+
 __all__ = [
-    "DocumentMetadata",
+    "DocumentMetadata", "JsonFileSchema"
 ]
