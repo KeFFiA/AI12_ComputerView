@@ -13,7 +13,7 @@ openpyxl==3.1.5
 transformers
 psycopg2-binary==2.9.10
 asyncpg==0.30.0
-
+pydantic[email]
 ollama==0.5.4
 langchain==0.3.27
 langchain-core==0.3.72
