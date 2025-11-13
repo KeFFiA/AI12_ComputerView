@@ -37,7 +37,9 @@ class Finder:
                 _files, _count = await self.find(path=path, extension=extension.value)
                 if _count > 0:
                     for _file in _files:
-                        logger.debug(f"[{extension.value.upper()}] Sending '{_file.split('\\')[-1]}' to {func.__name__} function")
+                        logger.debug(
+                            f"[{extension.value.upper()}] Sending '{Path(_file).name}' to {func.__name__} function"
+                        )
                         await func(session, _file, **kwargs)
 
             logger.debug(f"[{extension.value.upper()}] Waiting for new files...")
