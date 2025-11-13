@@ -8,8 +8,6 @@ from Schemas import JsonFileSchema
 from .Queueing import add_to_queue
 
 
-
-
 async def process_json_file(session, json_file):
     try:
         with open(json_file, "r", encoding="utf-8") as f:
