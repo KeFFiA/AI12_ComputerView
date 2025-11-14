@@ -4,6 +4,7 @@ from typing import Sequence, Union
 from pdf2image import convert_from_path
 import pytesseract
 from PyPDF2 import PdfReader
+from docx import Document
 
 from Config import pdf_extractor as logger
 from Database import PDF_Queue
@@ -47,6 +48,26 @@ def get_number_of_pages(path: Path) -> int:
     return total_pages
 
 
+def extract_docx_text(path: str | Path) -> str:
+    """
+    Extract text from a DOCX Word file.
+    """
+    doc = Document(path)
+    parts = []
+
+    for p in doc.paragraphs:
+        if p.text.strip():
+            parts.append(p.text)
+
+    for table in doc.tables:
+        for row in table.rows:
+            row_text = [cell.text.strip() for cell in row.cells]
+            if any(row_text):
+                parts.append(" | ".join(row_text))
+
+    return "\n".join(parts)
+
+
 async def extract_pdf_text(
     client,
     path: str | Path,
@@ -63,15 +84,40 @@ async def extract_pdf_text(
     :param pages_to_extract: list[int] or string like "1-3,5,7-9"
     :return: Extracted text as string
     """
+
+    path = Path(path)
+    ext = path.suffix.lower()
+
     async with client.session("service") as session:
         row = await session.get(PDF_Queue, fileid)
         if not row:
             logger.error(f"Row with id={fileid} not found in DB")
             return ""
 
+        if ext == ".docx":
+            try:
+                logger.info("Trying to extract text...")
+                row.status_description = "Trying to extract text"
+                await session.commit()
+
+                text = extract_docx_text(path)
+
+                row.progress_done += 1
+                row.progress = row.progress_done / row.progress_total * 100
+                row.status_description = "Text extraction completed"
+                await session.commit()
+
+                return text
+
+            except Exception as e:
+                logger.error(f"Text extraction error: {e}")
+                row.status_description = f"Text extraction failed: {e}"
+                await session.commit()
+                return ""
+
         try:
-            logger.info("Trying to extract PDF text...")
-            row.status_description = "Trying to extract PDF text"
+            logger.info("Trying to extract text...")
+            row.status_description = "Trying to extract text"
             await session.commit()
 
             reader = PdfReader(path)
@@ -92,7 +138,7 @@ async def extract_pdf_text(
                 await session.commit()
                 return text
 
-            raise ValueError("No text extracted from PDF, switching to OCR")
+            raise ValueError("No text extracted from document, switching to OCR")
 
         except Exception as e:
             logger.warning(f"Text extraction failed ({e}), switching to OCR...")
