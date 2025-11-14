@@ -43,7 +43,7 @@ class Finder:
                         await func(session, _file, **kwargs)
 
             logger.debug(f"[{extension.value.upper()}] Waiting for new files...")
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
 
 
 # if __name__ == "__main__":

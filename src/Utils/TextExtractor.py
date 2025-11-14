@@ -85,8 +85,7 @@ async def extract_pdf_text(
     :return: Extracted text as string
     """
 
-    path = Path(path)
-    ext = path.suffix.lower()
+    ext = Path(path).suffix.lower()
 
     async with client.session("service") as session:
         row = await session.get(PDF_Queue, fileid)
