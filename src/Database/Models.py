@@ -55,7 +55,7 @@ class Lease_Agreements(Base):
     engine2_msn: Mapped[str] = mapped_column(String, nullable=True)
     aircraft_registration: Mapped[str] = mapped_column(String, nullable=True)
     dated: Mapped[str] = mapped_column(String, nullable=True)
-    lesse: Mapped[str] = mapped_column(String, nullable=True)
+    lessee: Mapped[str] = mapped_column(String, nullable=True)
     lessor: Mapped[str] = mapped_column(String, nullable=True)
     currency: Mapped[str] = mapped_column(String, nullable=True)
     damage_proceeds: Mapped[str] = mapped_column(String, nullable=True)
