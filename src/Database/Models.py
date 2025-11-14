@@ -44,6 +44,7 @@ class FieldSynonym(Base):
     created_source: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     extra: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
 
+
 class Lease_Agreements(Base):
     aircraft_count: Mapped[int] = mapped_column(Integer, default=0)
     engines_count: Mapped[int] = mapped_column(Integer, default=0)
