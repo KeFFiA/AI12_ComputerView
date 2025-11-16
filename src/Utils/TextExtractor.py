@@ -44,6 +44,13 @@ def parse_page_ranges(pages: Union[str, Sequence[int], None], total_pages: int) 
 
 
 def get_number_of_pages(path: Path) -> int:
+    if str(path).lower().endswith(".docx"):
+        try:
+            doc = Document(str(path))
+            return max(1, len(doc.paragraphs) // 20 or 1)
+        except Exception:
+            return 1
+
     reader = PdfReader(path)
     total_pages = len(reader.pages)
     return total_pages
