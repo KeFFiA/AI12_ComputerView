@@ -91,7 +91,7 @@ async def extract_pdf_text(
             logger.error(f"Row with id={fileid} not found in DB")
             return ""
 
-        if ".docx" in path:
+        if str(path).lower().endswith(".docx"):
             try:
                 logger.info("Trying to extract text...")
                 row.status_description = "Trying to extract text"
