@@ -35,12 +35,33 @@ def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:
 
 
 async def get_embeddings(texts: List[str], model) -> List[List[float]]:
+    cleaned = []
+    for t in texts:
+        if not isinstance(t, str):
+            cleaned.append("")
+            continue
+        t2 = t.replace("\x00", " ").strip()
+        if not t2:
+            t2 = " "
+        cleaned.append(t2)
+
     out_vectors: List[List[float]] = []
     llm_client = await OllamaClient(model).AsyncClient
 
-    for i in range(0, len(texts), EMBED_BATCH):
-        batch = texts[i: i + EMBED_BATCH]
-        resp = await llm_client.embeddings(input=batch)
+    for i in range(0, len(cleaned), EMBED_BATCH):
+        batch = cleaned[i: i + EMBED_BATCH]
+
+        try:
+            resp = await llm_client.embeddings(input=batch)
+        except Exception as e:
+            for item in batch:
+                try:
+                    r = await llm_client.embeddings(input=[item])
+                    out_vectors.append([float(x) for x in r.embeddings[0]])
+                except Exception as e2:
+                    out_vectors.append([])
+                    # logger.error(f"Embedding failed for a chunk: {e2}")
+            continue
 
         for item in resp.embeddings:
             if isinstance(item, (list, tuple)):
@@ -48,10 +69,8 @@ async def get_embeddings(texts: List[str], model) -> List[List[float]]:
             else:
                 out_vectors.append([])
 
-    while len(out_vectors) < len(texts):
-        out_vectors.append([])
-
     return out_vectors
+
 
 
 async def upsert_document_embeddings(

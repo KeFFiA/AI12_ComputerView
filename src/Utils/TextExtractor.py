@@ -54,7 +54,6 @@ async def extract_docx_text(path: str | Path) -> str:
     Extract text from a DOCX Word file.
     """
     await asyncio.sleep(30)
-    logger.info("extract docx text func")
     doc = Document(path)
     parts = []
 
@@ -95,15 +94,12 @@ async def extract_pdf_text(
             return ""
 
         if str(path).lower().endswith(".docx"):
-            logger.info("docx")
             try:
                 logger.info("Trying to extract text...")
                 row.status_description = "Trying to extract text"
                 await session.commit()
-                logger.info("extracting")
 
                 text = await extract_docx_text(path)
-                logger.critical(text)
 
                 row.progress_done += 1
                 row.progress = row.progress_done / row.progress_total * 100
