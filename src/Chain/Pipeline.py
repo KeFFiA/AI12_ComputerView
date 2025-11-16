@@ -11,7 +11,7 @@ from Schemas.Enums import FileTypeEnum
 
 
 async def main_chain(client, file_path: Path, filename: str, fileid: int):
-    try:
+    # try:
         async with client.session("service") as session:
             row: PDF_Queue = await session.get(PDF_Queue, fileid)
             logger.info("Stage 1. Analysing file type")
@@ -82,14 +82,14 @@ async def main_chain(client, file_path: Path, filename: str, fileid: int):
             logger.info(f"Done. Created report {filename}")
 
         return True
-    except Exception as e:
-        async with client.session("service") as session:
-            row = await session.get(PDF_Queue, fileid)
-            row.status_description = str(e)
-            row.status = QueueStatusEnum.FAILED.value
-            await session.commit()
-        logger.error(e)
-        return False
+    # except Exception as e:
+    #     async with client.session("service") as session:
+    #         row = await session.get(PDF_Queue, fileid)
+    #         row.status_description = str(e)
+    #         row.status = QueueStatusEnum.FAILED.value
+    #         await session.commit()
+    #     logger.error(e)
+    #     return False
 
 
 if __name__ == "__main__":
