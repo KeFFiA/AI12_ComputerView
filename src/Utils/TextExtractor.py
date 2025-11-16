@@ -52,6 +52,7 @@ def extract_docx_text(path: str | Path) -> str:
     """
     Extract text from a DOCX Word file.
     """
+    logger.info("extract docx text func")
     doc = Document(path)
     parts = []
 
@@ -92,10 +93,12 @@ async def extract_pdf_text(
             return ""
 
         if str(path).lower().endswith(".docx"):
+            logger.info("docx")
             try:
                 logger.info("Trying to extract text...")
                 row.status_description = "Trying to extract text"
                 await session.commit()
+                logger.info("extracting")
 
                 text = extract_docx_text(path)
 

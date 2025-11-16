@@ -16,6 +16,7 @@ async def add_to_queue(session: AsyncSession, filename: str, user_email: str, _t
 
     :return: PDF_Queue row object
     """
+
     result = await session.execute(select(func.max(PDF_Queue.queue_position)))
     max_pos = result.scalar()
     next_pos = 1 if max_pos is None else max_pos + 1
@@ -26,8 +27,10 @@ async def add_to_queue(session: AsyncSession, filename: str, user_email: str, _t
         type=_type,
         queue_position=next_pos
     )
-    session.add(row)
-
+    try:
+        session.add(row)
+    except:
+        pass
     return row
 
 

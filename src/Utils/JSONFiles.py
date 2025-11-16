@@ -21,7 +21,10 @@ async def process_json_file(session, json_file):
                 _type=validated.type,
                 session=session
             )
-            await session.commit()
+            try:
+                await session.commit()
+            except:
+                pass
         logger.info(f"[JSON] Added {file_data['filename']} in queue")
     except json.JSONDecodeError as _ex:
         logger.error(f"[JSON] File error: {json_file} - {_ex}")
