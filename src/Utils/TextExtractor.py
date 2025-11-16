@@ -85,15 +85,13 @@ async def extract_pdf_text(
     :return: Extracted text as string
     """
 
-    ext = Path(path).suffix.lower()
-
     async with client.session("service") as session:
         row = await session.get(PDF_Queue, fileid)
         if not row:
             logger.error(f"Row with id={fileid} not found in DB")
             return ""
 
-        if ext == ".docx":
+        if ".docx" in path:
             try:
                 logger.info("Trying to extract text...")
                 row.status_description = "Trying to extract text"

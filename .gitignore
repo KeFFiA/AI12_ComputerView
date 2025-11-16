@@ -14,3 +14,4 @@
 /.env.dev
 /.env
 /tests/
+/__test/
