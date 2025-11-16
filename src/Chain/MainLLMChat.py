@@ -23,7 +23,7 @@ async def main_request(client, text: str | None = None,
         async with client.session("service") as session:
             row: PDF_Queue = await session.get(PDF_Queue, fileid)
             text = await extract_pdf_text(client, path, fileid, pages_to_extract=[1])
-            llm_text = FILE_TYPE_PROMPT.format(text=text)
+            llm_text = FILE_TYPE_PROMPT.format(text=text[:3000])
             format = FileTypeSchema
             row.status_description = "Waiting for answer..."
     if request_type == AnalysTypeEnum.PAGE_NAVIGATION:
