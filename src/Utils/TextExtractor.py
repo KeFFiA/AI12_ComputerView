@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from typing import Sequence, Union
 
@@ -52,6 +53,7 @@ def extract_docx_text(path: str | Path) -> str:
     """
     Extract text from a DOCX Word file.
     """
+    asyncio.sleep(30)
     logger.info("extract docx text func")
     doc = Document(path)
     parts = []
