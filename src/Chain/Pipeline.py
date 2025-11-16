@@ -22,7 +22,7 @@ async def main_chain(client, file_path: Path, filename: str, fileid: int):
             await session.commit()
             file_type_response = await main_request(client=client, path=file_path, fileid=fileid, request_type=AnalysTypeEnum.FILE_TYPE)
             row.status_description = f"File type: {file_type_response.document_type.value}"
-            logger.debug(f"File type: {file_type_response.document_type.value}")
+            logger.info(f"File type: {file_type_response.document_type.value}")
 
         async with client.session("service") as session:
             row: PDF_Queue = await session.get(PDF_Queue, fileid)

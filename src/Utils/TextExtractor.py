@@ -116,6 +116,7 @@ async def extract_pdf_text(
                 row.progress_done += 1
                 row.progress = row.progress_done / row.progress_total * 100
                 row.status_description = "Text extraction completed"
+                logger.info("Text extraction completed")
                 await session.commit()
 
                 return text
