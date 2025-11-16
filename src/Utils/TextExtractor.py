@@ -103,6 +103,7 @@ async def extract_pdf_text(
                 logger.info("extracting")
 
                 text = await extract_docx_text(path)
+                logger.critical(text)
 
                 row.progress_done += 1
                 row.progress = row.progress_done / row.progress_total * 100
