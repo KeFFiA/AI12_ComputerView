@@ -1,6 +1,8 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+from sqlalchemy.exc import IntegrityError
+
 from Config import DBSettings
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine, AsyncSession
 
@@ -42,6 +44,9 @@ class DatabaseClient:
             try:
                 yield session
                 await session.commit()
+            except IntegrityError:
+                await session.rollback()
+                return
             except Exception:
                 await session.rollback()
                 raise
