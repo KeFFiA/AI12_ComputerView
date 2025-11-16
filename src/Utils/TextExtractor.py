@@ -49,11 +49,11 @@ def get_number_of_pages(path: Path) -> int:
     return total_pages
 
 
-def extract_docx_text(path: str | Path) -> str:
+async def extract_docx_text(path: str | Path) -> str:
     """
     Extract text from a DOCX Word file.
     """
-    asyncio.sleep(30)
+    await asyncio.sleep(30)
     logger.info("extract docx text func")
     doc = Document(path)
     parts = []
@@ -102,7 +102,7 @@ async def extract_pdf_text(
                 await session.commit()
                 logger.info("extracting")
 
-                text = extract_docx_text(path)
+                text = await extract_docx_text(path)
 
                 row.progress_done += 1
                 row.progress = row.progress_done / row.progress_total * 100
