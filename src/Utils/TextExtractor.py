@@ -6,6 +6,7 @@ from pdf2image import convert_from_path
 import pytesseract
 from PyPDF2 import PdfReader
 from docx import Document
+import mammoth
 
 from Config import pdf_extractor as logger
 from Database import PDF_Queue
@@ -60,21 +61,25 @@ async def extract_docx_text(path: str | Path) -> str:
     """
     Extract text from a DOCX Word file.
     """
-    await asyncio.sleep(30)
-    doc = Document(path)
-    parts = []
-
-    for p in doc.paragraphs:
-        if p.text.strip():
-            parts.append(p.text)
-
-    for table in doc.tables:
-        for row in table.rows:
-            row_text = [cell.text.strip() for cell in row.cells]
-            if any(row_text):
-                parts.append(" | ".join(row_text))
-
-    return "\n".join(parts)
+    with open(path, "rb") as f:
+        result = mammoth.extract_raw_text(f)
+        text = result.value
+    return text
+    # await asyncio.sleep(30)
+    # doc = Document(path)
+    # parts = []
+    #
+    # for p in doc.paragraphs:
+    #     if p.text.strip():
+    #         parts.append(p.text)
+    #
+    # for table in doc.tables:
+    #     for row in table.rows:
+    #         row_text = [cell.text.strip() for cell in row.cells]
+    #         if any(row_text):
+    #             parts.append(" | ".join(row_text))
+    #
+    # return "\n".join(parts)
 
 
 async def extract_pdf_text(
