@@ -34,11 +34,8 @@ class Finder:
                          ):
         while True:
             async with db_client.session(db_table) as session:
-                logger.info("Founder 1")
                 _files, _count = await self.find(path=path, extension=extension.value)
                 if _count > 0:
-                    logger.info("Founder count: {}".format(_count))
-                    logger.info("Founder Files {}".format(_files))
                     for _file in _files:
                         logger.debug(
                             f"[{extension.value.upper()}] Sending '{Path(_file).name}' to {func.__name__} function"

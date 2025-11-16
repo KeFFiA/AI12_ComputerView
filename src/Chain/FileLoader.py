@@ -29,7 +29,6 @@ async def start_processor_loop(client):
             if rows:
                 for row in rows:
                     path: Path = FILES_PATH / row.filename
-                    logger.info("Test in loop 1, file: {}".format(path))
                     row.status = QueueStatusEnum.PROCESSING.value
                     await session.commit()
                     logger.info(f"Processing file: {row.filename}")
