@@ -38,8 +38,8 @@ class FieldExtractionResult(ReasonSchema):
 
 
 class LeaseAgreementData(BaseModel):
-    aircraft_count: Optional[int] = Field(None, description="Number of aircraft in the lease", alias="Aircraft Count")
-    engines_count: Optional[int] = Field(None, description="Number of engines in the lease", alias="Engines Count")
+    aircraft_count: Optional[int] = Field(None, description="Number of aircraft in the file", alias="Aircraft Count")
+    engines_count: Optional[int] = Field(None, description="Number of engines in the file", alias="Engines Count")
     aircraft_type: Optional[str] = Field(None, description="Aircraft type, e.g., A320, B737", alias="Aircraft Type")
     msn: Optional[str] = Field(None, description="Main aircraft MSN", alias="MSN")
     engines_manufacturer: Optional[str] = Field(None, description="Manufacturer of the engines", alias="Engines Manufacture")
@@ -48,13 +48,13 @@ class LeaseAgreementData(BaseModel):
     engine2_msn: Optional[str] = Field(None, description="Second engine MSN", alias="Engine2 MSN")
     aircraft_registration: Optional[str] = Field(None, description="Aircraft registration number", alias="Aircraft Registration")
     dated: Optional[str] = Field(None, description="Date of the agreement", alias="Dated")
-    lessee: Optional[str] = Field(None, description="Lessee company name", alias="Lesse")
+    lessee: Optional[str] = Field(None, description="Lessee company name", alias="Lessee")
     lessor: Optional[str] = Field(None, description="Lessor company name", alias="Lessor")
     currency: Optional[str] = Field(None, description="Currency of contract", alias="Currency")
-    damage_proceeds_threshold: Optional[str] = Field(None, description="Damage proceeds threshold", alias="Damage Proceeds")
+    damage_proceeds_threshold: Optional[str] = Field(None, description="Damage proceeds threshold", alias="Damage Proceeds Threshold")
     aircraft_agreed_value: Optional[str] = Field(None, description="Agreed value of aircraft", alias="Aircraft Agreed Value")
-    aircraft_hull_all_risks: Optional[str] = Field(None, description="Insurance type: Hull All Risks", alias="Aircraft Hull All Risks")
-    min_liability_coverages: Optional[str] = Field(None, description="Minimum liability coverages required", alias="Min Liability Coverages")
+    aircraft_hull_all_risks: Optional[str] = Field(None, description="Insurance type: Hull All Risks", alias="Hull All Risks")
+    min_liability_coverages: Optional[str] = Field(None, description="Minimum liability coverages required", alias="Minimal Liability Coverages")
     all_risks_deductible: Optional[str] = Field(None, description="All Risks deductible amount", alias="All Risks Deductible")
 
 

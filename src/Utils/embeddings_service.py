@@ -303,6 +303,7 @@ async def propose_and_add_synonyms(
 async def find_field_value_via_embeddings(
         file_name: str,
         field_name: str,
+        field_additional_info: str | None = None,
         top_k_per_term: int = 3
 ) -> FieldExtractionResult:
     """
@@ -342,7 +343,7 @@ async def find_field_value_via_embeddings(
     context_snippets = [r.text for _, r in deduped[:10]]
     context = "\n\n---\n\n".join(context_snippets)
 
-    extraction_prompt = DATA_EXTRACT_PROMPT.format(field_name=field_name, context=context)
+    extraction_prompt = DATA_EXTRACT_PROMPT.format(field_name=field_name, context=context, additional_info=field_additional_info)
     chat_resp = await llm_client.chat(messages=[{"role": "user", "content": extraction_prompt}],
                                       keep_alive=True, format=FieldExtractionResult.model_json_schema())
     content = chat_resp.message.content

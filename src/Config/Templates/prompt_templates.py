@@ -70,6 +70,9 @@ DATA_EXTRACT_PROMPT = """
 You are an expert data extractor. Using the context below, find the value for the field: "{field_name}".
 - Provide the most precise value you can find.
 
+Additional info:
+{additional_info}
+
 Context:
 {context}
 

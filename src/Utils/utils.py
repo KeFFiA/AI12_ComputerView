@@ -2,7 +2,7 @@ from Schemas.Enums import FileTypeEnum
 from pydantic import ValidationError
 
 
-def get_constants_by_filetype(file_type: FileTypeEnum = FileTypeEnum.NOT_DEFINED) -> list | str | int | None:
+def get_constants_by_filetype(file_type: FileTypeEnum = FileTypeEnum.NOT_DEFINED) -> dict | list | None:
     from Config.Templates import INSURANCE_SURVEYOR_REPORT_CONSTANTS, LEASE_AGREEMENT_CONSTANTS
     if file_type == FileTypeEnum.LEASE_AGREEMENT:
         return LEASE_AGREEMENT_CONSTANTS

@@ -26,13 +26,15 @@ async def processor_with_embeddings(
             row: PDF_Queue = await session.get(PDF_Queue, file_id)
             fields_to_find = get_constants_by_filetype(file_type)
             row.progress_total += len(fields_to_find)
-            for field in fields_to_find:
-                row.status_description = "Parsing field: {}...".format(field)
-                extracted = await find_field_value_via_embeddings(
-                    file_name=file_path.name,
-                    field_name=field,
-                    top_k_per_term=3
-                )
+            if isinstance(fields_to_find, dict):
+                for field, field_value in fields_to_find.items():
+                    row.status_description = "Parsing field: {}...".format(field)
+                    extracted = await find_field_value_via_embeddings(
+                        file_name=file_path.name,
+                        field_name=field,
+                        field_additional_info=field_value,
+                        top_k_per_term=3
+                    )
                 results.append(extracted)
                 row.progress_done += 1
                 row.progress = row.progress_done / row.progress_total * 100

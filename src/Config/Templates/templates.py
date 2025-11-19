@@ -3,46 +3,41 @@ from datetime import date
 from pydantic import BaseModel, Field
 
 
-class Claim(BaseModel):
-    report_type: str = Field(
-        description="Report type, like 'Final' or 'Update' or 'Interim' or 'Full and Final' or etc.")
-    msn: int = Field(
-        description="From: *Case Number* or *Manufacturer’s Serial Number* or *MSN* or *Serial* or *SERIAL NO* or *case_id* field")
-    aircraft: str = Field(description="From: *AIRCRAFT TYPE* or *Type and Model* or *Aircraft* or *TYPE* field")
-    registration: str = Field(description="From: *Registration* or *Reg* or *Reg No* field")
-    insured: str = Field(description="From: *Insured* field.")
-    insurer: str = Field(description="From: *LEAD INSURER* or *INSURERS* or *To* field")
-    cause: str = Field(
-        description="From: *Incident* or *CIRCUMSTANCES/CAUSE* or *DAMAGE/LOSS* or *CIRCUMSTANCES* field")
-    location: str = Field(description="From: *LOCATION OF LOSS* or *INCIDENT LOCATION* or *Incident* field")
-    dol: date = Field(description="From: *Date of Loss* or *DATE OF LOSS* or *INCIDENT DATE* field.")
-    indemnity_reserve: float = Field(
-        description="""From: *LOSS RESERVE* or *CLAIMED AMOUNT* or *Indemnity Reserve* field""")
-    indemnity_reserve_currency: str = Field(
-        description="From: *LOSS RESERVE* or *CLAIMED AMOUNT* or *Indemnity Reserve* field")
-    paid_to_date: float = Field(description="From: *Paid to Date* field")
-    paid_to_date_currency: str = Field(description="From: *Paid to Date* field")
-
-    summary: str = Field(description="""From: *Claim Update* or *EXECUTIVE SUMMARY* or *Summary* field""")
-
-    contact_name: str = Field(description="From: end of last page")
-    contact_title: str = Field(description="From: end of last page")
-    contact_phone: str = Field(description="From: end of last page")
-    contact_email: str = Field(description="From: end of last page")
-
-
 INSURANCE_SURVEYOR_REPORT_CONSTANTS = [
     "Report type", "MSN", "Aircraft type", "Aircraft Registration", "Insured", "Insurer", "Cause of loss",
     "Location of loss", "Date of loss", "Indemnity reserve", "Indemnity reserve currency", "Paid to date",
     "Paid to date currency", "Summary", "Contact name", "Contact title", "Contact phone", "Contact email"
 ]
 
-LEASE_AGREEMENT_CONSTANTS = [
-    "Aircraft Count", "Engines Count", "Aircraft Type", "MSN", "Engines Manufacture", "Engines Models", "Engine1 MSN",
-    "Engine2 MSN", "Aircraft Registration", "Dated", "Lesse", "Lessor", "Currency", "Damage Proceeds", "Threshold",
-    "Aircraft Agreed Value", "Aircraft Hull All Risks", "Min Liability Coverages", "All Risks Deductible"
-]
+
+LEASE_AGREEMENT_CONSTANTS = {
+    "Aircraft Count": "Number of aircrafts",
+    "Engines Count": "Number of engines",
+    "Aircraft Type": "Type of Aircraft, e.g.: Airbus A320. It's necessarily!!",
+    "MSN": "Manufacturer Serial Number. Other field names: MSN, Manufacturer Serial Number, Serial Number, Aircraft Serial Number, etc. It's necessarily!!",
+    "Engines Manufacture": "Engines manufacture's name. May be locate in 'Engines' block or same.",
+    "Engines Models": "Engines models. May be locate in 'Engines' block or same, if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "Engine1 MSN": "Engine No.1 MSN. Other field names: Engine Serial Number, Engine Serial No, Engine Manufacture Serial Number. "
+                   "May be locate in 'Engines' block or same, if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "Engine2 MSN": "Engine No.2 MSN. Other field names: Engine Serial Number, Engine Serial No, Engine Manufacture Serial Number. "
+                   "May be locate in 'Engines' block or same, if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "Aircraft Registration": "Aircraft registration number. E.g.: YL-LTD. If not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "Dated": "The date the agreement was signed",
+    "Lessee": "Lessee is described at the beginning of the file, E.g.: Smartlynx Airlines. If not defined - use Null",
+    "Lessor": "Lessor is described at the beginning of the file, E.g.: BANK OF UTAH. If not defined - use Null",
+    "Currency": "E.g.: Dollar. If not defined - use Dollar by default",
+    "Damage Proceeds Threshold": "Value in Dollar or another Currency. Other field names: Estimated Excess Cost, Notice of Damage, Damage Proceeds Threshold, Damage Notification Threshold, "
+                                 "if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "Aircraft Agreed Value": "Value in Dollar or another Currency. Other field names: Casualty Value, Insured Value, Aircraft Agreed Value, Agreed Value, "
+                             "if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "Aircraft Hull All Risks": "Value in Dollar or another Currency. Other field names: Liability Insurance Coverage Amount, Aircraft Hull All Risks"
+                               "if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "Min Liability Coverages": "Value in Dollar or another Currency. Other field names: Minimum Liability Coverages, Aircraft Third Party, Third Party"
+                               "if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+    "All Risks Deductible": "Value in Dollar or another Currency. Other field names: Deductibles, Deductible, Aircraft Hull Deductible Amount, Aircraft Hull All Risks, Self Insurance Amount, Maximum Deductible Amount, Hull All Risks of Loss or Damage"
+                               "if not defined - use Null, if it is mentioned that the field refers to another file, you must specify the file name.",
+}
 
 __all__ = [
-    "Claim", "LEASE_AGREEMENT_CONSTANTS", "INSURANCE_SURVEYOR_REPORT_CONSTANTS"
+    "LEASE_AGREEMENT_CONSTANTS", "INSURANCE_SURVEYOR_REPORT_CONSTANTS"
 ]

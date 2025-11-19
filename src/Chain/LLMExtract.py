@@ -8,10 +8,10 @@ from langchain_core.exceptions import OutputParserException
 from Database import PDF_Queue
 from Config import OllamaClient, MAINEXTRACT_PROMPT
 from Config import llm_log as logger
-from Config.Templates import Claim
 
 
-parser = JsonOutputParser(pydantic_object=Claim)
+
+parser = JsonOutputParser(pydantic_object=...)
 
 async def extract_information(client, fileid: int, text: str|dict, template: str = MAINEXTRACT_PROMPT):
     prompt = PromptTemplate(
