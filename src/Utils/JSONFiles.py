@@ -2,8 +2,10 @@ import json
 import os
 
 from pydantic import ValidationError
+from sqlalchemy import select
 
 from Config.Loggers import json_processor as logger
+from Database import PDF_Queue
 from Schemas import JsonFileSchema
 from .Queueing import add_to_queue
 
@@ -15,6 +17,11 @@ async def process_json_file(session, json_file):
         validated = JsonFileSchema(**file_data)
 
         for filename in validated.filename.split(','):
+            result = await session.execute(select(PDF_Queue))
+            rows = await result.scalars().all()
+            filenames = [row.filename for row in rows]
+            if filename in filenames:
+                continue
             await add_to_queue(
                 filename=filename.strip(),
                 user_email=validated.user_email,
