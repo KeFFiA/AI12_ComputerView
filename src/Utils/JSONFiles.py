@@ -18,7 +18,7 @@ async def process_json_file(session, json_file):
 
         for filename in validated.filename.split(','):
             result = await session.execute(select(PDF_Queue))
-            rows = await result.scalars().all()
+            rows = result.scalars().all()
             filenames = [row.filename for row in rows]
             if filename in filenames:
                 continue
