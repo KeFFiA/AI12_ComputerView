@@ -38,6 +38,7 @@ class FieldExtractionResult(ReasonSchema):
 
 
 class LeaseAgreementData(BaseModel):
+    filename: str = Field(...)
     aircraft_count: Optional[int] = Field(None, description="Number of aircraft in the file", alias="Aircraft Count")
     engines_count: Optional[int] = Field(None, description="Number of engines in the file", alias="Engines Count")
     aircraft_type: Optional[str] = Field(None, description="Aircraft type, e.g., A320, B737", alias="Aircraft Type")
