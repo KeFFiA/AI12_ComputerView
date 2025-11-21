@@ -1,6 +1,6 @@
 import json
 from datetime import datetime
-from Database.Models import Lease_Agreements
+from Database.Models import Lease_Output
 from Schemas import LeaseAgreementData
 from pydantic import BaseModel
 from Config import OUTPUT_CLAIMS_PATH, file_processor as logger
@@ -17,7 +17,7 @@ async def create_report(client, data: dict, filename: str):
 
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
-            row = Lease_Agreements(
+            row = Lease_Output(
                 **parsed
             )
         else:
