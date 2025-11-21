@@ -21,7 +21,7 @@ async def create_report(client, data: dict, filename: str):
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
             row = Lease_Output(
-                parsed.model_dump()
+                **parsed.model_dump()
             )
         else:
             parsed = None
