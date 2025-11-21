@@ -14,16 +14,14 @@ async def create_report(client, data: dict, filename: str):
     schema = match_schema(data, LeaseAgreementData)[0]
     try:
         parsed = schema.model_validate(data)
-        print("try")
     except ValidationError as _ex:
         parsed = schema.model_validate(**data)
-        print("failed")
 
 
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
             row = Lease_Output(
-                **parsed
+                parsed.model_dump()
             )
         else:
             parsed = None
