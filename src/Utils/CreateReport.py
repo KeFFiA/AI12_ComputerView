@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from Database.Models import Lease_Output
 from Schemas import LeaseAgreementData
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from Config import OUTPUT_CLAIMS_PATH, file_processor as logger
 from .utils import match_schema
 
@@ -12,7 +12,13 @@ async def create_report(client, data: dict, filename: str):
     with open(filename, "w", encoding="utf-8") as file:
         file.write(json.dumps(data, indent=4))
     schema = match_schema(data, LeaseAgreementData)[0]
-    parsed = schema.model_validate(data)
+    try:
+        parsed = schema.model_validate(data)
+        print("try")
+    except ValidationError as _ex:
+        parsed = schema.model_validate(**data)
+        print("failed")
+
 
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
