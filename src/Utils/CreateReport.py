@@ -13,7 +13,7 @@ async def create_report(client, data: dict, filename: str):
         file.write(json.dumps(data, indent=4))
 
     schema = match_schema(data, LeaseAgreementData)[0]
-    parsed = schema.model_validate_json(data)
+    parsed = schema.model_validate_json(f"{data}")
 
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
