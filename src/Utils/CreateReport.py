@@ -11,9 +11,8 @@ async def create_report(client, data: dict, filename: str):
     filename = OUTPUT_CLAIMS_PATH / f"{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
     with open(filename, "w", encoding="utf-8") as file:
         file.write(json.dumps(data, indent=4))
-
     schema = match_schema(data, LeaseAgreementData)[0]
-    parsed = schema.model_validate_json(f"{data}")
+    parsed = schema.model_validate(data)
 
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
