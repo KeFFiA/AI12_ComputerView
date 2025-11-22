@@ -17,7 +17,7 @@ async def create_report(client, data: dict, filename: str):
     except ValidationError as _ex:
         parsed = schema.model_validate(**data)
 
-
+    print("\n\n\n", parsed.model_dump())
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
             row = Lease_Output(
