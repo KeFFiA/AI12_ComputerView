@@ -12,12 +12,14 @@ async def create_report(client, data: dict, filename: str):
     with open(filename, "w", encoding="utf-8") as file:
         file.write(json.dumps(data, indent=4))
     schema = match_schema(data, LeaseAgreementData)[0]
+    # schema = LeaseAgreementData
     try:
         parsed = schema.model_validate(data)
     except ValidationError as _ex:
         parsed = schema.model_validate(**data)
 
-    print("\n\n\n", parsed.model_dump())
+    print("\n\n\n", data)
+    # print("\n\n\n", parsed.model_dump())
     async with client.session("main") as session:
         if schema == LeaseAgreementData:
             row = Lease_Output(
