@@ -1,7 +1,7 @@
-# ---------- stage 1: python 3.12 ----------
-FROM python:3.12-slim AS python312
+# ---------- stage 1: python 3.12 (jammy) ----------
+FROM python:3.12-jammy AS python312
 
-# ---------- stage 2: cuda runtime ----------
+# ---------- stage 2: cuda runtime (jammy) ----------
 FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
 # --- system deps ---
@@ -20,7 +20,7 @@ RUN apt-get update && \
         libxrender-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# --- copy python 3.12 ---
+# --- copy python 3.12 (glibc-compatible) ---
 COPY --from=python312 /usr/local /usr/local
 
 # --- make python default ---
