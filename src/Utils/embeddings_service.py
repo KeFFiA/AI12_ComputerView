@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Dict
 
 import numpy as np
+from openai import OpenAI
 from pgvector import Vector
 from sqlalchemy import select, func
 
@@ -255,16 +256,26 @@ async def propose_and_add_synonyms(
     Stores them in the FieldSynonym table.
     """
     client = DatabaseClient()
-    llm_client = await OllamaClient(LLM_MODEL).AsyncClient
+    llm_client = OpenAI(base_url="http://158.255.7.14:8000", api_key="not-needed")
 
     ctx_snippets = "\n\n---\n\n".join(contexts[:6])  # максимум 6 фрагментов
     prompt = PROPOSE_AND_ADD_SYNONYMS_PROMPT.format(ctx_snippets=ctx_snippets, field_name=field_name)
-    chat_resp = await llm_client.chat(
-        messages=[{"role": "user", "content": prompt}],
-        keep_alive=True
+    response = llm_client.chat.completions.create(
+        model="qwen2.5-72b-instruct-q8_0-00001-of-00021",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an expert at find synonyms for given text."
+            },
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0
     )
 
-    content = chat_resp.message.content
+    content = response.choices[0].message.content
     added: List[str] = []
 
     try:
@@ -314,7 +325,7 @@ async def find_field_value_via_embeddings(
     5) Asks LLM to suggest new synonyms and saves them
     """
     client = DatabaseClient()
-    llm_client = await OllamaClient(LLM_MODEL).AsyncClient
+    llm_client = OpenAI(base_url="http://158.255.7.14:8000", api_key="not-needed")
 
     async with client.session("service") as session:
         q = await session.execute(select(FieldSynonym).where(FieldSynonym.field_name == field_name))
@@ -344,17 +355,28 @@ async def find_field_value_via_embeddings(
     context = "\n\n---\n\n".join(context_snippets)
 
     extraction_prompt = DATA_EXTRACT_PROMPT.format(field_name=field_name, context=context, additional_info=field_additional_info)
-    chat_resp = await llm_client.chat(messages=[{"role": "user", "content": extraction_prompt}],
-                                      keep_alive=True, format=FieldExtractionResult.model_json_schema())
-    content = chat_resp.message.content
 
-    try:
-        parsed = FieldExtractionResult.model_validate_json(content)
-    except:
-        try:
-            parsed = FieldExtractionResult.model_validate_json(content.removeprefix('{"'))
-        except:
-            parsed = FieldExtractionResult.model_validate_json(content.removeprefix('{'))
+    response = llm_client.chat.completions.create(
+        model="qwen2.5-72b-instruct-q8_0-00001-of-00021",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are an expert at field value parsing.\n"
+                    "Return ONLY valid JSON matching this schema:\n"
+                    f"{json.dumps(FieldExtractionResult.model_json_schema(), indent=2)}"
+                )
+            },
+            {
+                "role": "user",
+                "content": extraction_prompt
+            }
+        ],
+        temperature=0
+    )
+
+    raw = response.choices[0].message.content
+    parsed = FieldExtractionResult.model_validate_json(raw)
 
     print("Parsed: ", parsed)
 

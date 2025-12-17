@@ -29,6 +29,7 @@ async def processor_with_embeddings(
             if isinstance(fields_to_find, dict):
                 for field, field_value in fields_to_find.items():
                     row.status_description = "Parsing field: {}...".format(field)
+                    logger.info("Parsing field: {}...".format(field))
                     extracted = await find_field_value_via_embeddings(
                         file_name=file_path.name,
                         field_name=field,
@@ -44,6 +45,7 @@ async def processor_with_embeddings(
         async with client.session("service") as session:
             row: PDF_Queue = await session.get(PDF_Queue, file_id)
             row.status_description = f"Error while parse field '{field}': {e}"
+            logger.info(f"Error while parse field '{field}': {e}")
             await session.commit()
         logger.exception(f"Error while parse field '{field}': {e}", exc_info=True)
         return {}

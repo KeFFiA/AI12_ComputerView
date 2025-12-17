@@ -1,11 +1,13 @@
+import json
 from pathlib import Path
 
 
-from Config import OllamaClient
 from Config import llm_chat as logger
 from Config.Templates import FILE_TYPE_PROMPT, PAGE_NAVIGATION_PROMPT
 from Database import PDF_Queue
 from Utils import extract_pdf_text
+
+from openai import OpenAI
 
 from Schemas import AnalysTypeEnum, FileTypeSchema, PageNavigationSchema, DefaultMessageSchema
 
@@ -15,10 +17,12 @@ async def main_request(client, text: str | None = None,
                        *,
                        path: str | Path | None = None,
                        fileid: int | None = None) -> FileTypeSchema | PageNavigationSchema | DefaultMessageSchema:
-    llm_client = await OllamaClient().AsyncClient
     if request_type is None:
         llm_text = text
         format = DefaultMessageSchema
+
+    llm_client = OpenAI(base_url="http://158.255.7.14:8000/v1", api_key="not-needed")
+
     if request_type == AnalysTypeEnum.FILE_TYPE:
         async with client.session("service") as session:
             row: PDF_Queue = await session.get(PDF_Queue, fileid)
@@ -26,6 +30,8 @@ async def main_request(client, text: str | None = None,
             llm_text = FILE_TYPE_PROMPT.format(text=text[:1000])
             format = FileTypeSchema
             row.status_description = "Waiting for answer..."
+            logger.info("Fetching File Type. Waiting for answer...")
+
     if request_type == AnalysTypeEnum.PAGE_NAVIGATION:
         async with client.session("service") as session:
             row = await session.get(PDF_Queue, fileid)
@@ -33,19 +39,31 @@ async def main_request(client, text: str | None = None,
             llm_text = PAGE_NAVIGATION_PROMPT.format(text=text)
             format = PageNavigationSchema
             row.status_description = "Waiting for answer..."
+            logger.info("Fetching Page Navigation exist. Waiting for answer...")
 
 
-    response = await llm_client.chat(messages=[{
-        'role': 'user',
-        'content': llm_text
-    }], format=format.model_json_schema(), think=True)
-    try:
-        return format.model_validate_json(response.message.content)
-    except:
-        try:
-            return format.model_validate_json(response.message.content.removeprefix('{"'))
-        except:
-            return format.model_validate_json(response.message.content.removeprefix('{'))
+    response = llm_client.chat.completions.create(
+        model="qwen2.5-72b-instruct-q8_0-00001-of-00021",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are an expert at document type parsing.\n"
+                    "Return ONLY valid JSON matching this schema:\n"
+                    f"{json.dumps(format.model_json_schema(), indent=2)}"
+                )
+            },
+            {
+                "role": "user",
+                "content": llm_text
+            }
+        ],
+        temperature=0
+    )
+
+    raw = response.choices[0].message.content
+    parsed = format.model_validate_json(raw)
+    return parsed
 
 
 if __name__ == '__main__':
