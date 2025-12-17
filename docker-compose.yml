@@ -5,24 +5,18 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: data_parser
-    depends_on:
-      - llama3
     volumes:
       - /api_data:/app/api_data
     environment:
       - PYTHONUNBUFFERED=1
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    gpus: all
     env_file:
       - ./PDF_LLM_Parser/.env
     networks:
       - ollama_net
     restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
 
 
 networks:
