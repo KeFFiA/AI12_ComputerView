@@ -13,7 +13,7 @@ services:
       - NVIDIA_DRIVER_CAPABILITIES=all
     gpus: all
     env_file:
-      - ./PDF_LLM_Parser/.env
+      - .env
     networks:
       - ollama_net
     restart: unless-stopped
