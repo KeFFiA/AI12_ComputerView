@@ -1,5 +1,8 @@
 FROM nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+
 # ---------- system deps ----------
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
